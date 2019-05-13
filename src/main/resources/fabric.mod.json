@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "mumblelink",
+  "version": "${version}",
+  "name": "MumbleLink",
+  "description": "Positional audio support for Mumble",
+  "authors": [
+    {
+      "name": "Mitchell Skaggs",
+      "contact": {
+        "email": "skaggsm333@gmail.com"
+      }
+    }
+  ],
+  "contact": {
+    "issues": "https://github.com/FabricMC/fabric-example-mod",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "LGPL-3.0-or-later",
+  "icon": "assets/mumblelink/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "com.skaggsm.mumblelinkmod.ClientMumbleLinkMod"
+      }
+    ]
+  },
+  "mixins": [],
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.3.30"
+  }
+}
