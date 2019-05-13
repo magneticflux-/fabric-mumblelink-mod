@@ -13,8 +13,8 @@
     }
   ],
   "contact": {
-    "issues": "https://github.com/FabricMC/fabric-example-mod",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "issues": "https://github.com/magneticflux-/fabric-mumblelink-mod/issues",
+    "sources": "https://github.com/magneticflux-/fabric-mumblelink-mod"
   },
   "license": "LGPL-3.0-or-later",
   "icon": "assets/mumblelink/icon.png",
