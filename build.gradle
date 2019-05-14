@@ -8,6 +8,7 @@ plugins {
     id "com.github.ben-manes.versions" version "0.21.0"
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.matthewprenger.cursegradle" version "1.2.0"
 }
 
 repositories {
@@ -41,7 +42,6 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    include "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modCompile "net.fabricmc:fabric-language-kotlin:1.3.31+build.2"
     include "net.fabricmc:fabric-language-kotlin:1.3.31+build.2"
@@ -94,8 +94,11 @@ shadowJar {
 }
 
 task remapShadowJar(type: RemapJar, dependsOn: shadowJar) {
-    it.jar = shadowJar.archivePath
+    delegate.jar = shadowJar.archivePath
 }
+
+tasks.remapShadowJar.dependsOn tasks.shadowJar
+tasks.assemble.dependsOn tasks.remapShadowJar
 
 // configure the maven publication
 publishing {
@@ -116,4 +119,32 @@ publishing {
         // uncomment to publish to the local maven
         // mavenLocal()
     }
+}
+
+curseforge {
+    // Stored in ~/.gradle/gradle.properties
+    apiKey = project.curseApiKey
+
+    project {
+        id = "321669"
+        releaseType = "beta"
+        addGameVersion "1.14-Snapshot"
+        addGameVersion "1.14"
+        mainArtifact(remapShadowJar.jar) {
+            displayName = "$archives_base_name-$project.version"
+            relations {
+                requiredDependency "fabric"
+                embeddedLibrary "fabric-language-kotlin"
+            }
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+    }
+}
+
+afterEvaluate {
+    // CurseGradle generates tasks in afterEvaluate for each project
+    // There isn't really any other way to make it depend on a task unless it is an AbstractArchiveTask
+    tasks.curseforge321669.dependsOn remapShadowJar
 }
