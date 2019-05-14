@@ -2,7 +2,6 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJar
-import net.fabricmc.loom.task.RemapSourcesJar
 
 plugins {
     java
@@ -52,8 +51,10 @@ dependencies {
 
     modCompile(group = "net.fabricmc", name = "fabric-loader", version = loader_version)
     modCompile(group = "net.fabricmc", name = "fabric", version = fabric_version)
+    //include(group = "net.fabricmc", name = "fabric", version = fabric_version)
 
     modCompile(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.3.31+build.2")
+    //include(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.3.31+build.2")
 
     modCompile(group = "io.github.prospector.modmenu", name = "ModMenu", version = "1.5.3-84")
 
@@ -78,18 +79,9 @@ val shadowJar by tasks.getting(ShadowJar::class) {
     relocate("com.skaggsm.sharedmemory", "com.skaggsm.mumblelinkmod.shadowed.sharedmemory")
 }
 
-val remapJar = tasks.getByName<RemapJar>("remapJar") {
-    (this as Task).dependsOn(shadowJar)
-    mustRunAfter(shadowJar)
-    jar = shadowJar.archivePath
-}
-val remapSourcesJar = tasks.getByName<RemapSourcesJar>("remapSourcesJar") {
-    // jar = shadowJar.archivePath
-}
-
-val sourcesJar = tasks.create<Jar>("sourcesJar") {
-    classifier = "sources"
-    from(sourceSets["main"].allSource)
+val remapShadowJar = tasks.create("remapShadowJar", RemapJar::class.java as Class<Jar>) {
+    dependsOn(shadowJar)
+    (this as RemapJar).jar = shadowJar.archivePath
 }
 
 // configure the maven publication
@@ -97,9 +89,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             // add all the jars that should be included when publishing to maven
-            artifact(shadowJar) {
-            }
-            artifact(sourcesJar) {
+            artifact(remapShadowJar) {
             }
         }
     }

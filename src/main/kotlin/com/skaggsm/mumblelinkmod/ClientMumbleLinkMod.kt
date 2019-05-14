@@ -39,7 +39,6 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 mumble.identity = it.player.uuidAsString
 
                 mumble.context = "${it.world.dimension.type}-${it.player.scoreboardTeam?.name}"
-                println("${mumble.identity}@${mumble.context}")
 
                 mumble.description = "A Minecraft mod that provides position data to Mumble."
             } else {
