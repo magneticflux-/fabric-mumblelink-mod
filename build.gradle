@@ -114,10 +114,8 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
+        mavenLocal()
     }
 }
 
@@ -146,5 +144,6 @@ curseforge {
 afterEvaluate {
     // CurseGradle generates tasks in afterEvaluate for each project
     // There isn't really any other way to make it depend on a task unless it is an AbstractArchiveTask
+    tasks.curseforge321669.dependsOn publish
     tasks.curseforge321669.dependsOn remapShadowJar
 }
