@@ -50,7 +50,7 @@ dependencies {
     // You may need to force-disable transitiveness on them.
     modCompile "io.github.prospector.modmenu:ModMenu:1.5.3-84"
 
-    shadow("com.skaggsm:java-mumble-link:0.2.1") {
+    shadow("com.skaggsm:java-mumble-link:0.2.2") {
         exclude group: "net.java.dev.jna"
     }
 }
