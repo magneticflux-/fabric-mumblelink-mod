@@ -6,8 +6,14 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.minecraft.util.math.Vec3d
 
-private val Vec3d.toArray: FloatArray
-    get() = floatArrayOf(x.toFloat(), y.toFloat(), z.toFloat())
+/**
+ * Convert to a float 3-array in a left-handed coordinate system.
+ * Minecraft is right-handed by default, Mumble needs left-handed.
+ *
+ * @see <a href="https://wiki.mumble.info/wiki/Link#Coordinate_system">Coordinate system</a>
+ */
+private val Vec3d.toLHArray: FloatArray
+    get() = floatArrayOf(x.toFloat(), y.toFloat(), -z.toFloat())
 
 /**
  * Created by Mitchell Skaggs on 5/12/2019.
@@ -20,21 +26,22 @@ object ClientMumbleLinkMod : ClientModInitializer {
             if (it.world != null) {
                 val mumble = ensureLinked()
 
-                val camPos = it.player.getCameraPosVec(1F)
-                val camDir = it.player.rotationVecClient
+                val camPos = it.player.getCameraPosVec(1F).toLHArray
+                val camDir = it.player.rotationVecClient.toLHArray
+                val camTop = floatArrayOf(0f, 1f, 0f)
 
                 mumble.uiVersion = 2
                 mumble.uiTick++
 
-                mumble.avatarPosition = camPos.toArray
-                mumble.avatarFront = camDir.toArray
-                //mumble.avatarTop
+                mumble.avatarPosition = camPos
+                mumble.avatarFront = camDir
+                mumble.avatarTop = camTop
 
                 mumble.name = "Minecraft MumbleLink Mod"
 
-                mumble.cameraPosition = camPos.toArray
-                mumble.cameraFront = camDir.toArray
-                //mumble.cameraTop
+                mumble.cameraPosition = camPos
+                mumble.cameraFront = camDir
+                mumble.cameraTop = camTop
 
                 mumble.identity = it.player.uuidAsString
 
