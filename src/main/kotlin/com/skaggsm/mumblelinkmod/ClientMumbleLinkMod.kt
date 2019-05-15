@@ -30,6 +30,10 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camDir = it.player.rotationVecClient.toLHArray
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
+                // Makes people in other dimensions far away so they're muted.
+                val yAxisAdjuster = it.world.dimension.type.rawId * 512f
+                camPos[1] += yAxisAdjuster
+
                 mumble.uiVersion = 2
                 mumble.uiTick++
 
@@ -45,7 +49,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
                 mumble.identity = it.player.uuidAsString
 
-                mumble.context = "${it.world.dimension.type}-${it.player.scoreboardTeam?.name}"
+                mumble.context = "Minecraft" //"${it.world.dimension.type}-${it.player.scoreboardTeam?.name}"
 
                 mumble.description = "A Minecraft mod that provides position data to Mumble."
             } else {
