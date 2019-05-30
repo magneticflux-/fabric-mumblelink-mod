@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.skaggsm.mumblelinkmod.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinPlayerManager"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

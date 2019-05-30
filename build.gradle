@@ -54,15 +54,13 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.properties "version": project.version,
+            "archives_base_name": project.archives_base_name
 
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
-        expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
+        expand "version": project.version,
+                "archives_base_name": project.archives_base_name
     }
 }
 

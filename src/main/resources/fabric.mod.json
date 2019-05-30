@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "mumblelink",
+  "id": "${archives_base_name}",
   "version": "${version}",
   "name": "MumbleLink",
   "description": "Positional audio support for Mumble",
@@ -19,8 +19,14 @@
   },
   "license": "LGPL-3.0-or-later",
   "icon": "assets/mumblelink/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "com.skaggsm.mumblelinkmod.MumbleLinkMod"
+      }
+    ],
     "client": [
       {
         "adapter": "kotlin",
@@ -28,8 +34,10 @@
       }
     ]
   },
-  "mixins": [],
-  "requires": {
+  "mixins": [
+    "${archives_base_name}.mixins.json"
+  ],
+  "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
     "fabric-language-kotlin": ">=1.3.30"

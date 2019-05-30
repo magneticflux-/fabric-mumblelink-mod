@@ -2,9 +2,13 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.network.SendMumbleURL
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.util.math.Vec3d
+import java.awt.Desktop
+import java.net.URI
 
 /**
  * Convert to a float 3-array in a left-handed coordinate system.
@@ -22,6 +26,10 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     override fun onInitializeClient() {
+        ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
+            Desktop.getDesktop().browse(URI.create("mumble://${bytes.readString()}"))
+        }
+
         ClientTickCallback.EVENT.register(ClientTickCallback {
             if (it.world != null) {
                 val mumble = ensureLinked()
@@ -79,5 +87,10 @@ object ClientMumbleLinkMod : ClientModInitializer {
             mumble = null
             println("Unlinked")
         }
+    }
+
+    init {
+        // Required to open URIs
+        System.setProperty("java.awt.headless", "false")
     }
 }
