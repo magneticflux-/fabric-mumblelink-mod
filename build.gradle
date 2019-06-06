@@ -1,10 +1,10 @@
 plugins {
     id "java"
-    id "org.jetbrains.kotlin.jvm" version "1.3.31"
     id "idea"
-    id "fabric-loom" version "0.2.2-SNAPSHOT"
-    id "com.github.ben-manes.versions" version "0.21.0"
     id "maven-publish"
+    id "org.jetbrains.kotlin.jvm" version "1.3.31"
+    id "fabric-loom" version "0.2.4-SNAPSHOT"
+    id "com.github.ben-manes.versions" version "0.21.0"
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id "com.matthewprenger.cursegradle" version "1.2.0"
 }
@@ -19,11 +19,19 @@ repositories {
         name = "Kotlin X"
     }
     maven { url = "https://dl.bintray.com/magneticflux/maven" }
+    maven {
+        url = "https://minecraft.curseforge.com/api/maven"
+        name = "CurseForge"
+    }
+    maven { url = 'http://maven.sargunv.s3-website-us-west-2.amazonaws.com/' }
     jcenter()
 }
 
+// Enable Java 8 language features
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
+compileKotlin.kotlinOptions.jvmTarget = "1.8"
+compileTestKotlin.kotlinOptions.jvmTarget = "1.8"
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -40,13 +48,19 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    include "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompile "net.fabricmc:fabric-language-kotlin:1.3.31+build.2"
-    include "net.fabricmc:fabric-language-kotlin:1.3.31+build.2"
+    modCompile "net.fabricmc:fabric-language-kotlin:1.3.31+build.4"
+    include "net.fabricmc:fabric-language-kotlin:1.3.31+build.4"
 
-    // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-    // You may need to force-disable transitiveness on them.
-    modCompile "io.github.prospector.modmenu:ModMenu:1.5.4-85"
+    modCompile "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+    include "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+
+    modCompile "cloth-config:ClothConfig:0.2.4.17"
+    include "cloth-config:ClothConfig:0.2.4.17"
+
+    modCompile "me.sargunvohra.mcmods:auto-config:1.1.2+mc1.14.1"
+    include "me.sargunvohra.mcmods:auto-config:1.1.2+mc1.14.1"
 
     shadow("com.skaggsm:java-mumble-link:0.2.3") {
         exclude group: "net.java.dev.jna"
@@ -71,10 +85,6 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-jar {
-    from "LICENSE"
-}
-
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
@@ -83,23 +93,26 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+jar {
+    from "LICENSE"
+}
+
 shadowJar {
+    // Needed to override the jar output and be used by Loom's remapJar
+    // Loom sets the jar classifier to dev and uses the default classifier for the output
+    archiveClassifier.set("dev")
     configurations = [project.configurations.shadow]
     relocate "com.skaggsm.jmumblelink", "com.skaggsm.mumblelinkmod.shadowed.jmumblelink"
     relocate "com.skaggsm.sharedmemory", "com.skaggsm.mumblelinkmod.shadowed.sharedmemory"
 }
-
-tasks.remapJar {
-    delegate.dependsOn tasks.shadowJar
-    delegate.jar = shadowJar.archivePath
-}
+jar.finalizedBy shadowJar
 
 // configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
             // add all the jars that should be included when publishing to maven
-            artifact(remapJar.jar) {
+            artifact(jar.archiveFile) {
                 builtBy remapJar
             }
             artifact(sourcesJar) {
@@ -118,10 +131,10 @@ curseforge {
     apiKey = project.curseApiKey
 
     project {
-        id = "321669"
+        id = project.curseforge_id
         releaseType = "beta"
-        addGameVersion "1.14.1"
-        mainArtifact(remapJar.jar) {
+        addGameVersion "1.14.2"
+        mainArtifact(jar.archiveFile) {
             displayName = "$archives_base_name-$project.version"
             relations {
                 requiredDependency "fabric"
@@ -137,6 +150,6 @@ curseforge {
 afterEvaluate {
     // CurseGradle generates tasks in afterEvaluate for each project
     // There isn't really any other way to make it depend on a task unless it is an AbstractArchiveTask
-    tasks.curseforge321669.dependsOn publish
-    tasks.curseforge321669.dependsOn remapJar
+    tasks.getByName("curseforge${project.curseforge_id}").dependsOn publish
+    tasks.getByName("curseforge${project.curseforge_id}").dependsOn remapJar
 }

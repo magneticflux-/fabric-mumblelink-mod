@@ -2,7 +2,10 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
+import me.sargunvohra.mcmods.autoconfig1.AutoConfig
+import me.sargunvohra.mcmods.autoconfig1.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
@@ -26,6 +29,8 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     override fun onInitializeClient() {
+        AutoConfig.register(MumbleLinkConfig::class.java, ::Toml4jConfigSerializer)
+
         ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
             Desktop.getDesktop().browse(URI.create("mumble://${bytes.readString()}"))
         }
