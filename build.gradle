@@ -2,11 +2,16 @@ plugins {
     id "java"
     id "idea"
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.3.31"
-    id "fabric-loom" version "0.2.4-SNAPSHOT"
+    id "org.jetbrains.kotlin.jvm" version "1.3.40"
+    id "fabric-loom" version "0.2.5-SNAPSHOT"
     id "com.github.ben-manes.versions" version "0.21.0"
     id "com.github.johnrengelman.shadow" version "5.0.0"
-    id "com.matthewprenger.cursegradle" version "1.2.0"
+    id "com.matthewprenger.cursegradle" version "1.3.0"
+}
+
+configurations {
+    shaded
+    implementation.extendsFrom shaded
 }
 
 repositories {
@@ -48,13 +53,11 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    include "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompile "net.fabricmc:fabric-language-kotlin:1.3.31+build.4"
-    include "net.fabricmc:fabric-language-kotlin:1.3.31+build.4"
+    modCompile "net.fabricmc:fabric-language-kotlin:1.3.40+build.+"
+    include "net.fabricmc:fabric-language-kotlin:1.3.40+build.+"
 
     modCompile "io.github.prospector.modmenu:ModMenu:1.6.2-92"
-    include "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 
     modCompile "cloth-config:ClothConfig:0.2.4.17"
     include "cloth-config:ClothConfig:0.2.4.17"
@@ -62,7 +65,7 @@ dependencies {
     modCompile "me.sargunvohra.mcmods:auto-config:1.1.2+mc1.14.1"
     include "me.sargunvohra.mcmods:auto-config:1.1.2+mc1.14.1"
 
-    shadow("com.skaggsm:java-mumble-link:0.2.3") {
+    shaded("com.skaggsm:java-mumble-link:0.2.3") {
         exclude group: "net.java.dev.jna"
     }
 }
@@ -97,22 +100,23 @@ jar {
     from "LICENSE"
 }
 
-shadowJar {
-    // Needed to override the jar output and be used by Loom's remapJar
-    // Loom sets the jar classifier to dev and uses the default classifier for the output
-    archiveClassifier.set("dev")
-    configurations = [project.configurations.shadow]
-    relocate "com.skaggsm.jmumblelink", "com.skaggsm.mumblelinkmod.shadowed.jmumblelink"
-    relocate "com.skaggsm.sharedmemory", "com.skaggsm.mumblelinkmod.shadowed.sharedmemory"
+remapJar {
+    dependsOn shadowJar
+    input = shadowJar.archiveFile
 }
-jar.finalizedBy shadowJar
+
+shadowJar {
+    configurations = [project.configurations.shaded]
+    relocate "com.skaggsm.jmumblelink", "com.skaggsm.mumblelinkmod.shaded.jmumblelink"
+    relocate "com.skaggsm.sharedmemory", "com.skaggsm.mumblelinkmod.shaded.sharedmemory"
+}
 
 // configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
             // add all the jars that should be included when publishing to maven
-            artifact(jar.archiveFile) {
+            artifact(remapJar) {
                 builtBy remapJar
             }
             artifact(sourcesJar) {
@@ -132,10 +136,10 @@ curseforge {
 
     project {
         id = project.curseforge_id
-        releaseType = "beta"
-        addGameVersion "1.14.2"
-        mainArtifact(jar.archiveFile) {
-            displayName = "$archives_base_name-$project.version"
+        releaseType = "alpha"
+        addGameVersion "1.14.3"
+        mainArtifact(remapJar) {
+            displayName = "$archives_base_name-$project.version [$project.minecraft_version]"
             relations {
                 requiredDependency "fabric"
                 embeddedLibrary "fabric-language-kotlin"
