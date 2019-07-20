@@ -131,7 +131,7 @@ curseforge {
     project {
         id = project.curseforge_id
         releaseType = "release"
-        addGameVersion "1.14.3"
+        addGameVersion "1.14.4"
         mainArtifact(remapJar) {
             displayName = "$archives_base_name-$project.version [$project.minecraft_version]"
             relations {
