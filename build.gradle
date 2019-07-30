@@ -5,7 +5,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.3.40"
     id "fabric-loom" version "0.2.5-SNAPSHOT"
     id "com.github.ben-manes.versions" version "0.21.0"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "5.1.0"
     id "com.matthewprenger.cursegradle" version "1.3.0"
 }
 
@@ -57,7 +57,7 @@ dependencies {
     modCompile "net.fabricmc:fabric-language-kotlin:1.3.40+build.+"
     include "net.fabricmc:fabric-language-kotlin:1.3.40+build.+"
 
-    modCompile "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+    modCompile "io.github.prospector.modmenu:ModMenu:1.6.3-95"
 
     modCompile "cloth-config:ClothConfig:0.2.4.17"
     include "cloth-config:ClothConfig:0.2.4.17"
@@ -132,16 +132,19 @@ publishing {
 
 curseforge {
     // Stored in ~/.gradle/gradle.properties
-    apiKey = project.curseApiKey
+    if (project.hasProperty("curseApiKey"))
+        apiKey = project.curseApiKey
+    else
+        println "No CurseForge API key found, 'curseforge' tasks will not work"
 
     project {
         id = project.curseforge_id
         releaseType = "alpha"
-        addGameVersion "1.14.3"
+        addGameVersion "1.14.4"
         mainArtifact(remapJar) {
             displayName = "$archives_base_name-$project.version [$project.minecraft_version]"
             relations {
-                requiredDependency "fabric"
+                requiredDependency "fabric-api"
                 embeddedLibrary "fabric-language-kotlin"
             }
         }
