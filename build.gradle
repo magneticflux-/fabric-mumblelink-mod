@@ -5,7 +5,7 @@ plugins {
     id 'fabric-loom' version '0.2.5-SNAPSHOT'
     id 'com.github.ben-manes.versions' version '0.22.0'
     id 'com.github.johnrengelman.shadow' version '5.1.0'
-    id 'com.matthewprenger.cursegradle' version '1.3.0'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.kotlin.jvm' version '1.3.41'
     id 'org.shipkit.java' version '2.2.5'
 }
@@ -53,9 +53,9 @@ dependencies {
     modCompile 'net.fabricmc:fabric-language-kotlin:1.3.40+build.1'
     include 'net.fabricmc:fabric-language-kotlin:1.3.40+build.1'
 
-    modCompile 'io.github.prospector:modmenu:1.7.5+build.114'
+    modCompile 'io.github.prospector:modmenu:1.7.9+build.118'
 
-    shaded('com.skaggsm:java-mumble-link:0.2.3') {
+    shaded('com.skaggsm:java-mumble-link:0.2.4') {
         exclude group: 'net.java.dev.jna'
     }
 }
