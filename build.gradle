@@ -55,7 +55,7 @@ dependencies {
 
     modCompile 'io.github.prospector:modmenu:1.7.5+build.114'
 
-    shaded('com.skaggsm:java-mumble-link:0.2.3') {
+    shaded('com.skaggsm:java-mumble-link:0.2.4') {
         exclude group: 'net.java.dev.jna'
     }
 }
