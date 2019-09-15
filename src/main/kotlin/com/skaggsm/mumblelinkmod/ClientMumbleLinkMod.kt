@@ -2,10 +2,8 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
+import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.*
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
-import me.sargunvohra.mcmods.autoconfig1.AutoConfig
-import me.sargunvohra.mcmods.autoconfig1.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
@@ -29,10 +27,24 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     override fun onInitializeClient() {
-        AutoConfig.register(MumbleLinkConfig::class.java, ::Toml4jConfigSerializer)
-
         ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
-            Desktop.getDesktop().browse(URI.create("mumble://${bytes.readString()}"))
+            when (MumbleLinkMod.config.config.mumbleAutoLaunchOption) {
+                ACCEPT -> {
+                    val host = bytes.readString().let { if (it == "") null else it }
+                    val port = bytes.readInt()
+                    val path = bytes.readString().let { if (it == "") null else it }
+                    val query = bytes.readString().let { if (it == "") null else it }
+
+                    val uri = URI("mumble", null, host, port, path, query, null)
+
+                    println("Opening $uri")
+                    Desktop.getDesktop().browse(uri)
+                }
+                IGNORE -> {
+                }
+                PROMPT -> {
+                }
+            }
         }
 
         ClientTickCallback.EVENT.register(ClientTickCallback {
@@ -43,8 +55,8 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camDir = it.player.rotationVecClient.toLHArray
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
-                // Makes people in other dimensions far away so they're muted.
-                val yAxisAdjuster = it.world.dimension.type.rawId * 512f
+                // Make people in other dimensions far away so they're muted.
+                val yAxisAdjuster = it.world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
@@ -62,7 +74,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
                 mumble.identity = it.player.uuidAsString
 
-                mumble.context = "Minecraft" //"${it.world.dimension.type}-${it.player.scoreboardTeam?.name}"
+                mumble.context = "Minecraft"
 
                 mumble.description = "A Minecraft mod that provides position data to Mumble."
             } else {

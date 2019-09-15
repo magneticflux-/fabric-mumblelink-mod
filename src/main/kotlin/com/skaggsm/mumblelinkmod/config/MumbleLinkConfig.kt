@@ -9,9 +9,14 @@ import me.sargunvohra.mcmods.autoconfig1.annotation.Config
  */
 @Config(name = MumbleLink.MODID)
 class MumbleLinkConfig : ConfigData {
-    var autoLaunchMumble: AutoLaunchOption = AutoLaunchOption.ACCEPT
+    var mumbleAutoLaunchOption: AutoLaunchOption = AutoLaunchOption.ACCEPT
 
-    var defaultMumbleServer: String? = null
+    var mumbleServerHost: String? = null
+    var mumbleServerPort: Int? = null
+    var mumbleServerPath: String? = null
+    var mumbleServerQuery: String? = null
+
+    var mumbleDimensionYAxisAdjust: Float = 0f
 
     enum class AutoLaunchOption {
         IGNORE,

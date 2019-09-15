@@ -1,6 +1,10 @@
 {
   "text.autoconfig.fabric-mumblelink-mod.title": "MumbleLink Config",
   "text.autoconfig.fabric-mumblelink-mod.category.default": "Default",
-  "text.autoconfig.fabric-mumblelink-mod.option.autoLaunchMumble": "The action to take when a Mumble server is provided.",
-  "text.autoconfig.fabric-mumblelink-mod.option.defaultMumbleServer": "The Mumble server to use for self-hosted games."
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleAutoLaunchOption": "The action to take when a Mumble server is provided.",
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerHost": "The Mumble server host.",
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerPort": "The Mumble server port.",
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerPath": "The Mumble server path. Supports templating, see readme.",
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerQuery": "The Mumble server query. Supports templating, see readme.",
+  "text.autoconfig.fabric-mumblelink-mod.option.mumbleDimensionYAxisAdjust": "Y-Axis multiplier for dimension IDs. Only needed when not using unique dimension paths."
 }

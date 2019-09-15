@@ -1,11 +1,9 @@
 package com.skaggsm.mumblelinkmod.mixin;
 
 import com.skaggsm.mumblelinkmod.ServerOnConnectCallback;
-
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

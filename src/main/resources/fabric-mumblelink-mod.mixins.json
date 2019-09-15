@@ -3,7 +3,8 @@
   "package": "com.skaggsm.mumblelinkmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinPlayerManager"
+    "MixinPlayerManager",
+    "MixinServerPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

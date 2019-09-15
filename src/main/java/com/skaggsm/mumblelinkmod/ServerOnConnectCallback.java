@@ -29,5 +29,5 @@ public interface ServerOnConnectCallback {
 
                     });
 
-    void onConnect(ServerPlayerEntity var1);
+    void onConnect(ServerPlayerEntity player);
 }
