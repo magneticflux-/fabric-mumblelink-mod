@@ -13,7 +13,7 @@ class MumbleLinkConfig : ConfigData {
 
     var mumbleServerHost: String? = null
     var mumbleServerPort: Int? = null
-    var mumbleServerPath: String? = null
+    var mumbleServerPath: String? = "/Minecraft/{1}"
     var mumbleServerQuery: String? = null
 
     var mumbleDimensionYAxisAdjust: Float = 0f
