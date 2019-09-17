@@ -37,12 +37,13 @@ object MumbleLinkMod : ModInitializer {
             println("Updating Mumble location for ${player.name.string}!")
 
             val dim = Registry.DIMENSION.getId(toDimension)!!
-            val fullDimName = "${dim.namespace}_${dim.path}".split('_').joinToString(" ") { it.capitalize() }
-            val dimName = dim.path.split('_').joinToString(" ") { it.capitalize() }
+            val dimNamespace = dim.namespace.split('_').joinToString(" ") { it.capitalize() }
+            val dimPath = dim.path.split('_').joinToString(" ") { it.capitalize() }
+            val dimId = "$dimNamespace $dimPath"
 
             val teamName = player.scoreboardTeam?.name ?: ""
 
-            val templateParams: Array<Any> = arrayOf(fullDimName, dimName, teamName)
+            val templateParams: Array<Any> = arrayOf(dimId, dimNamespace, dimPath, teamName)
 
             val host: String = mumbleServerHost
             val port: Int = config.config.mumbleServerPort ?: -1
