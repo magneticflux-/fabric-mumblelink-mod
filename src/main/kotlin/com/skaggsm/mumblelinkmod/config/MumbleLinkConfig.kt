@@ -20,7 +20,7 @@ class MumbleLinkConfig : ConfigData {
 
     enum class AutoLaunchOption {
         IGNORE,
-        PROMPT,
+        //PROMPT,
         ACCEPT
     }
 }

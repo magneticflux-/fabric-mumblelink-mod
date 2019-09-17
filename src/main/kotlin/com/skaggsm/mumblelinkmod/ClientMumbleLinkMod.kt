@@ -2,7 +2,8 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.*
+import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
+import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.IGNORE
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
@@ -41,8 +42,6 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     Desktop.getDesktop().browse(uri)
                 }
                 IGNORE -> {
-                }
-                PROMPT -> {
                 }
             }
         }
