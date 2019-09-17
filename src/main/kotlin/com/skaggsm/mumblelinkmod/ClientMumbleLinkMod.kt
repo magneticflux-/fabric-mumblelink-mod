@@ -31,7 +31,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
         ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
             when (MumbleLinkMod.config.config.mumbleAutoLaunchOption) {
                 ACCEPT -> {
-                    val host = bytes.readString().let { if (it == "") null else it }
+                    val host = bytes.readString()
                     val port = bytes.readInt()
                     val path = bytes.readString().let { if (it == "") null else it }
                     val query = bytes.readString().let { if (it == "") null else it }
