@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinPlayerManager",
-    "MixinServerPlayerEntity"
+    "MixinServerPlayerEntity",
+    "MixinServerScoreboard"
   ],
   "injectors": {
     "defaultRequire": 1

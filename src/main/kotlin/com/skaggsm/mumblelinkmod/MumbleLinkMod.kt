@@ -8,6 +8,7 @@ import me.sargunvohra.mcmods.autoconfig1.ConfigHolder
 import me.sargunvohra.mcmods.autoconfig1.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ModInitializer
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.PacketByteBuf
 import net.minecraft.util.registry.Registry
@@ -24,15 +25,23 @@ object MumbleLinkMod : ModInitializer {
         config = AutoConfig.register(MumbleLinkConfig::class.java, ::Toml4jConfigSerializer)
 
         ServerOnConnectCallback.EVENT.register(ServerOnConnectCallback { player ->
-            sendMumblePacket(player.dimension, player)
+            sendMumblePacket(player)
         })
 
         ServerOnChangeDimensionCallback.EVENT.register(ServerOnChangeDimensionCallback { toDimension, player ->
-            sendMumblePacket(toDimension, player)
+            sendMumblePacket(player, toDimension)
+        })
+
+        ServerOnTeamsModify.EVENT.register(ServerOnTeamsModify { _, server ->
+            sendAllMumblePackets(server)
         })
     }
 
-    private fun sendMumblePacket(toDimension: DimensionType, player: ServerPlayerEntity) {
+    private fun sendAllMumblePackets(server: MinecraftServer) {
+        server.playerManager.playerList.forEach { sendMumblePacket(it) }
+    }
+
+    private fun sendMumblePacket(player: ServerPlayerEntity, toDimension: DimensionType = player.dimension) {
         config.config.mumbleServerHost?.let { mumbleServerHost ->
             println("Updating Mumble location for ${player.name.string}!")
 
