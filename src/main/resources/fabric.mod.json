@@ -46,6 +46,6 @@
     "fabric-language-kotlin": ">=1.3.30"
   },
   "custom": {
-    "modmenu:clientsideOnly": true
+    "modmenu:clientsideOnly": false
   }
 }
