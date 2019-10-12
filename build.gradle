@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'fabric-loom' version '0.2.5-SNAPSHOT'
-    id 'com.github.ben-manes.versions' version '0.24.0'
+    id 'com.github.ben-manes.versions' version '0.26.0'
     id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
@@ -53,7 +53,7 @@ dependencies {
     modCompile 'net.fabricmc:fabric-language-kotlin:1.3.50+build.3'
     include 'net.fabricmc:fabric-language-kotlin:1.3.50+build.3'
 
-    modCompile 'io.github.prospector:modmenu:1.7.11+build.121'
+    modCompile 'io.github.prospector:modmenu:1.7.13+build.123'
 
     modCompile 'cloth-config:ClothConfig:0.2.4.17'
     include 'cloth-config:ClothConfig:0.2.4.17'
