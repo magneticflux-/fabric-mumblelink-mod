@@ -113,9 +113,8 @@ remapJar {
 
 // Remove the ShipKit publication and recreate it with Fabric artifacts
 publishing.publications.getByName('javaLibrary') {
-    println((delegate as MavenPublication).artifacts)
     delegate.artifacts = [remapJar, sourcesJar]
-    println((delegate as MavenPublication).artifacts)
+    delegate.getArtifacts() // Force evaluation here. Fails if lazily evaluated later for some reason...
 }
 
 curseforge {
