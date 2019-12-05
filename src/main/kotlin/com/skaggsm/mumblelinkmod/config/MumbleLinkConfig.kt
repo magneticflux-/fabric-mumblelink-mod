@@ -1,9 +1,9 @@
 package com.skaggsm.mumblelinkmod.config
 
 import com.skaggsm.mumblelinkmod.MumbleLink
-import me.sargunvohra.mcmods.autoconfig1.ConfigData
-import me.sargunvohra.mcmods.autoconfig1.annotation.Config
-import me.sargunvohra.mcmods.autoconfig1.annotation.ConfigEntry
+import me.sargunvohra.mcmods.autoconfig1u.ConfigData
+import me.sargunvohra.mcmods.autoconfig1u.annotation.Config
+import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry
 
 /**
  * Created by Mitchell Skaggs on 5/30/2019.
