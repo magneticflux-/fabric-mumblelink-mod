@@ -2,6 +2,7 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.MumbleLinkMod.log
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.IGNORE
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
@@ -11,6 +12,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.util.math.Vec3d
 import java.awt.Desktop
 import java.net.URI
+import java.net.URISyntaxException
 
 /**
  * Convert to a float 3-array in a left-handed coordinate system.
@@ -36,10 +38,12 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     val path = bytes.readString().let { if (it == "") null else it }
                     val query = bytes.readString().let { if (it == "") null else it }
 
-                    val uri = URI("mumble", null, host, port, path, query, null)
-
-                    println("Opening $uri")
-                    Desktop.getDesktop().browse(uri)
+                    try {
+                        val uri = URI("mumble", null, host, port, path, query, null)
+                        Desktop.getDesktop().browse(uri)
+                    } catch (e: URISyntaxException) {
+                        log.warn("Ignoring invalid Mumble URI \"${e.input}\"")
+                    }
                 }
                 IGNORE -> {
                 }

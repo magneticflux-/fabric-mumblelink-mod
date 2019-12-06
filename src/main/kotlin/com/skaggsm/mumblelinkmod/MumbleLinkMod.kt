@@ -13,12 +13,15 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.PacketByteBuf
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.dimension.DimensionType
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.text.MessageFormat
 
 /**
  * Created by Mitchell Skaggs on 5/29/2019.
  */
 object MumbleLinkMod : ModInitializer {
+    val log: Logger = LogManager.getLogger(MumbleLink.MODID)
     lateinit var config: ConfigHolder<MumbleLinkConfig>
 
     override fun onInitialize() {
