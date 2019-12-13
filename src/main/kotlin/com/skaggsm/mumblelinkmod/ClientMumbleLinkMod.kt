@@ -2,6 +2,7 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.MumbleLinkMod.log
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.IGNORE
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
@@ -11,6 +12,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.util.math.Vec3d
 import java.awt.Desktop
 import java.net.URI
+import java.net.URISyntaxException
 
 /**
  * Convert to a float 3-array in a left-handed coordinate system.
@@ -36,10 +38,12 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     val path = bytes.readString().let { if (it == "") null else it }
                     val query = bytes.readString().let { if (it == "") null else it }
 
-                    val uri = URI("mumble", null, host, port, path, query, null)
-
-                    println("Opening $uri")
-                    Desktop.getDesktop().browse(uri)
+                    try {
+                        val uri = URI("mumble", null, host, port, path, query, null)
+                        Desktop.getDesktop().browse(uri)
+                    } catch (e: URISyntaxException) {
+                        log.warn("Ignoring invalid Mumble URI \"${e.input}\"")
+                    }
                 }
                 IGNORE -> {
                 }
@@ -47,15 +51,18 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
 
         ClientTickCallback.EVENT.register(ClientTickCallback {
-            if (it.world != null) {
+            val world = it.world
+            val player = it.player
+
+            if (world != null && player != null) {
                 val mumble = ensureLinked()
 
-                val camPos = it.player.getCameraPosVec(1F).toLHArray
-                val camDir = it.player.rotationVecClient.toLHArray
+                val camPos = player.getCameraPosVec(1F).toLHArray
+                val camDir = player.rotationVecClient.toLHArray
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
-                // Make people in other dimensions far away so they're muted.
-                val yAxisAdjuster = it.world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
+                // Make people in other dimensions far away so that they're muted.
+                val yAxisAdjuster = world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
@@ -71,7 +78,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 mumble.cameraFront = camDir
                 mumble.cameraTop = camTop
 
-                mumble.identity = it.player.uuidAsString
+                mumble.identity = player.uuidAsString
 
                 mumble.context = "Minecraft"
 

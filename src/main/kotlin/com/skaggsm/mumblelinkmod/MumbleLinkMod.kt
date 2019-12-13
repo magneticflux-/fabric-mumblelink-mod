@@ -3,9 +3,9 @@ package com.skaggsm.mumblelinkmod
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
 import io.netty.buffer.Unpooled
-import me.sargunvohra.mcmods.autoconfig1.AutoConfig
-import me.sargunvohra.mcmods.autoconfig1.ConfigHolder
-import me.sargunvohra.mcmods.autoconfig1.serializer.Toml4jConfigSerializer
+import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
+import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
+import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ModInitializer
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket
 import net.minecraft.server.MinecraftServer
@@ -13,12 +13,15 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.PacketByteBuf
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.dimension.DimensionType
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.text.MessageFormat
 
 /**
  * Created by Mitchell Skaggs on 5/29/2019.
  */
 object MumbleLinkMod : ModInitializer {
+    val log: Logger = LogManager.getLogger(MumbleLink.MODID)
     lateinit var config: ConfigHolder<MumbleLinkConfig>
 
     override fun onInitialize() {
