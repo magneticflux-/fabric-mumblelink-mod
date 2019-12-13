@@ -51,15 +51,18 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
 
         ClientTickCallback.EVENT.register(ClientTickCallback {
-            if (it.world != null) {
+            val world = it.world
+            val player = it.player
+
+            if (world != null && player != null) {
                 val mumble = ensureLinked()
 
-                val camPos = it.player.getCameraPosVec(1F).toLHArray
-                val camDir = it.player.rotationVecClient.toLHArray
+                val camPos = player.getCameraPosVec(1F).toLHArray
+                val camDir = player.rotationVecClient.toLHArray
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
-                // Make people in other dimensions far away so they're muted.
-                val yAxisAdjuster = it.world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
+                // Make people in other dimensions far away so that they're muted.
+                val yAxisAdjuster = world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
@@ -75,7 +78,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 mumble.cameraFront = camDir
                 mumble.cameraTop = camTop
 
-                mumble.identity = it.player.uuidAsString
+                mumble.identity = player.uuidAsString
 
                 mumble.context = "Minecraft"
 
