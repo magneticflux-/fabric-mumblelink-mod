@@ -2,17 +2,17 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '0.2.5-SNAPSHOT'
-    id 'com.github.ben-manes.versions' version '0.26.0'
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
+    id 'fabric-loom' version '0.2.6-SNAPSHOT'
+    id 'com.github.ben-manes.versions' version '0.27.0'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
     id 'org.shipkit.java' version '2.2.5'
 }
 
 configurations {
-    shaded
-    implementation.extendsFrom shaded
+    modShaded
+    modCompile.extendsFrom modShaded
 }
 
 repositories {
@@ -25,7 +25,7 @@ repositories {
         url = 'https://minecraft.curseforge.com/api/maven'
         name = 'CurseForge'
     }
-    maven { url = 'http://maven.sargunv.s3-website-us-west-2.amazonaws.com/' }
+    maven { url = 'https://dl.bintray.com/shedaniel/autoconfig1u/' }
     jcenter()
 }
 
@@ -44,24 +44,24 @@ minecraft {
 dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompile 'net.fabricmc:fabric-language-kotlin:1.3.50+build.3'
-    include 'net.fabricmc:fabric-language-kotlin:1.3.50+build.3'
+    modCompile 'net.fabricmc:fabric-language-kotlin:1.3.60+build.1'
+    include 'net.fabricmc:fabric-language-kotlin:1.3.60+build.1'
 
-    modCompile 'io.github.prospector:modmenu:1.7.13+build.123'
+    modCompile 'io.github.prospector:modmenu:1.8.0+build.16'
 
-    modCompile 'cloth-config:ClothConfig:0.2.4.17'
-    include 'cloth-config:ClothConfig:0.2.4.17'
+    modCompile 'me.shedaniel.cloth:config-2:2.5.1'
+    include 'me.shedaniel.cloth:config-2:2.5.1'
 
-    modCompile 'me.sargunvohra.mcmods:auto-config:1.2.0+mc1.14.4'
-    include 'me.sargunvohra.mcmods:auto-config:1.2.0+mc1.14.4'
+    modCompile 'me.sargunvohra.mcmods:autoconfig1u:1.2.4'
+    include 'me.sargunvohra.mcmods:autoconfig1u:1.2.4'
 
-    shaded('com.skaggsm:java-mumble-link:0.2.4') {
+    modShaded('com.skaggsm:java-mumble-link:0.2.4') {
         exclude group: 'net.java.dev.jna'
     }
 }
@@ -101,7 +101,7 @@ jar {
 */
 
 shadowJar {
-    configurations = [project.configurations.shaded]
+    configurations = [project.configurations.modShaded]
     relocate 'com.skaggsm.jmumblelink', 'com.skaggsm.mumblelinkmod.shaded.jmumblelink'
     relocate 'com.skaggsm.sharedmemory', 'com.skaggsm.mumblelinkmod.shaded.sharedmemory'
 }
@@ -112,22 +112,9 @@ remapJar {
 }
 
 // Remove the ShipKit publication and recreate it with Fabric artifacts
-publishing.publications.remove(publishing.publications.getByName('javaLibrary'))
-tasks.remove(tasks.getByName('generateMetadataFileForJavaLibraryPublication'))
-tasks.remove(tasks.getByName('generatePomFileForJavaLibraryPublication'))
-tasks.remove(tasks.getByName('publishJavaLibraryPublicationToMavenLocal'))
-publishing {
-    publications {
-        javaLibrary(MavenPublication) {
-            artifact(remapJar)
-            artifact(sourcesJar) {
-                // Don't remap sources so ShipKit doesn't get confused by missing sources
-                // Remap sources drops anything not *.java
-
-                //builtBy remapSourcesJar
-            }
-        }
-    }
+publishing.publications.getByName('javaLibrary') {
+    delegate.artifacts = [remapJar, sourcesJar]
+    delegate.getArtifacts() // Force evaluation here. Fails if lazily evaluated later for some reason...
 }
 
 curseforge {
@@ -142,7 +129,7 @@ curseforge {
     project {
         id = project.curseforge_id
         releaseType = 'release'
-        addGameVersion "$project.minecraft_version" // Change to 1.14.4 when CurseForge adds it
+        addGameVersion "$project.minecraft_version"
         mainArtifact(remapJar) {
             displayName = "$archives_base_name-$project.version [$project.minecraft_version]"
             relations {
