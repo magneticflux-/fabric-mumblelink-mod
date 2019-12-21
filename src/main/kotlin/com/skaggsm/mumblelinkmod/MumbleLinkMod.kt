@@ -28,25 +28,25 @@ object MumbleLinkMod : ModInitializer {
         config = AutoConfig.register(MumbleLinkConfig::class.java, ::Toml4jConfigSerializer)
 
         ServerOnConnectCallback.EVENT.register(ServerOnConnectCallback { player ->
-            sendMumblePacket(player)
+            sendVoipPacket(player)
         })
 
         ServerOnChangeDimensionCallback.EVENT.register(ServerOnChangeDimensionCallback { toDimension, player ->
-            sendMumblePacket(player, toDimension)
+            sendVoipPacket(player, toDimension)
         })
 
         ServerOnTeamsModify.EVENT.register(ServerOnTeamsModify { _, server ->
-            sendAllMumblePackets(server)
+            sendAllVoipPackets(server)
         })
     }
 
-    private fun sendAllMumblePackets(server: MinecraftServer) {
-        server.playerManager.playerList.forEach { sendMumblePacket(it) }
+    private fun sendAllVoipPackets(server: MinecraftServer) {
+        server.playerManager.playerList.forEach { sendVoipPacket(it) }
     }
 
-    private fun sendMumblePacket(player: ServerPlayerEntity, toDimension: DimensionType = player.dimension) {
+    private fun sendVoipPacket(player: ServerPlayerEntity, toDimension: DimensionType = player.dimension) {
         config.config.mumbleServerHost?.let { mumbleServerHost ->
-            println("Updating Mumble location for ${player.name.string}!")
+            log.trace("Updating VoIP location for ${player.name.string}!")
 
             val dim = Registry.DIMENSION.getId(toDimension)!!
             val dimNamespace = dim.namespace.split('_').joinToString(" ") { it.capitalize() }

@@ -44,7 +44,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                         val uri = URI(voipClient.scheme, null, host, port, path, query, null)
                         Desktop.getDesktop().browse(uri)
                     } catch (e: URISyntaxException) {
-                        log.warn("Ignoring invalid Mumble URI \"${e.input}\"")
+                        log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
                     }
                 }
                 IGNORE -> {
@@ -74,7 +74,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 mumble.avatarFront = camDir
                 mumble.avatarTop = camTop
 
-                mumble.name = "Minecraft MumbleLink Mod"
+                mumble.name = "Minecraft Mumble Link Mod"
 
                 mumble.cameraPosition = camPos
                 mumble.cameraFront = camDir
@@ -84,7 +84,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
                 mumble.context = "Minecraft"
 
-                mumble.description = "A Minecraft mod that provides position data to Mumble."
+                mumble.description = "A Minecraft mod that provides position data to VoIP clients."
             } else {
                 ensureClosed()
             }
@@ -97,20 +97,20 @@ object ClientMumbleLinkMod : ClientModInitializer {
         if (localMumble != null)
             return localMumble
 
-        println("Linking to Mumble...")
+        log.info("Linking to VoIP client...")
         localMumble = MumbleLinkImpl()
         mumble = localMumble
-        println("Linked")
+        log.info("Linked")
 
         return localMumble
     }
 
     private fun ensureClosed() {
         if (mumble != null) {
-            println("Unlinking from Mumble...")
+            log.info("Unlinking from VoIP client...")
             mumble?.close()
             mumble = null
-            println("Unlinked")
+            log.info("Unlinked")
         }
     }
 
