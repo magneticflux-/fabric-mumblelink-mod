@@ -3,6 +3,7 @@
   "text.autoconfig.fabric-mumblelink-mod.category.client": "Client",
   "text.autoconfig.fabric-mumblelink-mod.category.server": "Server",
   "text.autoconfig.fabric-mumblelink-mod.option.mumbleAutoLaunchOption": "The action to take when a Mumble server is provided.",
+  "text.autoconfig.fabric-mumblelink-mod.option.voipClient": "The VoIP client to launch.",
   "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerHost": "The Mumble server host.",
   "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerPort": "The Mumble server port.",
   "text.autoconfig.fabric-mumblelink-mod.option.mumbleServerPath": "The Mumble server path. Supports templating, see readme.",

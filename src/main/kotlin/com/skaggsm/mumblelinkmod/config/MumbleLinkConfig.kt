@@ -16,6 +16,8 @@ class MumbleLinkConfig : ConfigData {
     var mumbleDimensionYAxisAdjust: Float = 0f
 
     @ConfigEntry.Category("server")
+    var voipClient: VoipClient = VoipClient.MUMBLE
+    @ConfigEntry.Category("server")
     var mumbleServerHost: String? = null
     @ConfigEntry.Category("server")
     var mumbleServerPort: Int? = null
@@ -28,5 +30,10 @@ class MumbleLinkConfig : ConfigData {
         IGNORE,
         //PROMPT,
         ACCEPT
+    }
+
+    enum class VoipClient(val scheme: String) {
+        MUMBLE("mumble"),
+        TEAMSPEAK("ts3server")
     }
 }

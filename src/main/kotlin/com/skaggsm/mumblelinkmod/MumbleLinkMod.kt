@@ -63,6 +63,7 @@ object MumbleLinkMod : ModInitializer {
             val query: String = config.config.mumbleServerQuery?.let { MessageFormat.format(it, *templateParams) } ?: ""
 
             val buf = PacketByteBuf(Unpooled.buffer())
+            buf.writeInt(config.config.voipClient.ordinal)
             buf.writeString(host)
             buf.writeInt(port)
             buf.writeString(path)
