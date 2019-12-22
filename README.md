@@ -66,9 +66,15 @@ For more reference on Mumble URIs, see their [wiki page](https://wiki.mumble.inf
 
 For more reference on TeamSpeak URIs, see their [FAQ](https://support.teamspeakusa.com/index.php?/Knowledgebase/Article/View/46/0/how-can-i-link-to-my-teamspeak-3-server-on-my-webpage).
 
+#### More Channel Path Details
+
+In Mumble, the channel path should go in the URI path.
+
+In TeamSpeak, the channel path should go in a query parameter called `channel`.
+
 # Security considerations
 
-Servers with this mod will be able to open Mumble or TeamSpeak URIs through your client. Servers _can not_ open arbitrary URLs, because only the required information ([host](https://tools.ietf.org/html/rfc3986#section-3.2.2), [port](https://tools.ietf.org/html/rfc3986#section-3.2.3), [path](https://tools.ietf.org/html/rfc3986#section-3.3), and [query](https://tools.ietf.org/html/rfc3986#section-3.4)) is sent to the client. It is important to note that a full URL is _not_ sent to the client; the [scheme](https://tools.ietf.org/html/rfc3986#section-3.1), [user info](https://tools.ietf.org/html/rfc3986#section-3.2.1), and [fragment identifier](https://tools.ietf.org/html/rfc3986#section-3.5) are hard-coded. Only vulnerabilities in Mumble or TeamSpeak may be exploited, and only by servers trusted by the player.
+Servers with this mod will be able to open Mumble or TeamSpeak URIs through your client. Servers _cannot_ open arbitrary URLs, because only the required information ([host](https://tools.ietf.org/html/rfc3986#section-3.2.2), [port](https://tools.ietf.org/html/rfc3986#section-3.2.3), [path](https://tools.ietf.org/html/rfc3986#section-3.3), and [query](https://tools.ietf.org/html/rfc3986#section-3.4)) is sent to the client. It is important to note that a full URL is _not_ sent to the client; the [scheme](https://tools.ietf.org/html/rfc3986#section-3.1), [user info](https://tools.ietf.org/html/rfc3986#section-3.2.1), and [fragment identifier](https://tools.ietf.org/html/rfc3986#section-3.5) are hard-coded. Only vulnerabilities in Mumble or TeamSpeak may be exploited, and only by servers trusted by the player.
 
 The client-side URI construction is this fragment:
 ```kotlin
