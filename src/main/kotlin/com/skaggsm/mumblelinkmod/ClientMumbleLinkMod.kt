@@ -3,6 +3,7 @@ package com.skaggsm.mumblelinkmod
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
 import com.skaggsm.mumblelinkmod.MumbleLinkMod.log
+import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.IGNORE
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
@@ -33,16 +34,17 @@ object ClientMumbleLinkMod : ClientModInitializer {
         ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
             when (MumbleLinkMod.config.config.mumbleAutoLaunchOption) {
                 ACCEPT -> {
+                    val voipClient = MumbleLinkConfig.VoipClient.values()[bytes.readInt()]
                     val host = bytes.readString()
                     val port = bytes.readInt()
                     val path = bytes.readString().let { if (it == "") null else it }
                     val query = bytes.readString().let { if (it == "") null else it }
 
                     try {
-                        val uri = URI("mumble", null, host, port, path, query, null)
+                        val uri = URI(voipClient.scheme, null, host, port, path, query, null)
                         Desktop.getDesktop().browse(uri)
                     } catch (e: URISyntaxException) {
-                        log.warn("Ignoring invalid Mumble URI \"${e.input}\"")
+                        log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
                     }
                 }
                 IGNORE -> {
@@ -72,7 +74,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 mumble.avatarFront = camDir
                 mumble.avatarTop = camTop
 
-                mumble.name = "Minecraft MumbleLink Mod"
+                mumble.name = "Minecraft Mumble Link Mod"
 
                 mumble.cameraPosition = camPos
                 mumble.cameraFront = camDir
@@ -82,7 +84,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
                 mumble.context = "Minecraft"
 
-                mumble.description = "A Minecraft mod that provides position data to Mumble."
+                mumble.description = "A Minecraft mod that provides position data to VoIP clients."
             } else {
                 ensureClosed()
             }
@@ -95,20 +97,20 @@ object ClientMumbleLinkMod : ClientModInitializer {
         if (localMumble != null)
             return localMumble
 
-        println("Linking to Mumble...")
+        log.info("Linking to VoIP client...")
         localMumble = MumbleLinkImpl()
         mumble = localMumble
-        println("Linked")
+        log.info("Linked")
 
         return localMumble
     }
 
     private fun ensureClosed() {
         if (mumble != null) {
-            println("Unlinking from Mumble...")
+            log.info("Unlinking from VoIP client...")
             mumble?.close()
             mumble = null
-            println("Unlinked")
+            log.info("Unlinked")
         }
     }
 
