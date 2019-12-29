@@ -12,7 +12,7 @@ plugins {
 
 configurations {
     modShaded
-    modCompile.extendsFrom modShaded
+    modImplementation.extendsFrom modShaded
 }
 
 repositories {
@@ -45,20 +45,20 @@ dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompile 'net.fabricmc:fabric-language-kotlin:1.3.61+build.1'
+    modImplementation 'net.fabricmc:fabric-language-kotlin:1.3.61+build.1'
     include 'net.fabricmc:fabric-language-kotlin:1.3.61+build.1'
 
-    modCompile 'io.github.prospector:modmenu:1.8.2+build.18'
+    modImplementation 'io.github.prospector:modmenu:1.8.2+build.18'
 
-    modCompile 'me.shedaniel.cloth:config-2:2.5.4'
+    modImplementation 'me.shedaniel.cloth:config-2:2.5.4'
     include 'me.shedaniel.cloth:config-2:2.5.4'
 
-    modCompile 'me.sargunvohra.mcmods:autoconfig1u:1.2.4'
+    modImplementation 'me.sargunvohra.mcmods:autoconfig1u:1.2.4'
     include 'me.sargunvohra.mcmods:autoconfig1u:1.2.4'
 
     modShaded('com.skaggsm:java-mumble-link:0.2.4') {
