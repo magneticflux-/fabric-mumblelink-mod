@@ -7,7 +7,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ModInitializer
-import net.minecraft.client.network.packet.CustomPayloadS2CPacket
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.PacketByteBuf
@@ -48,7 +48,7 @@ object MumbleLinkMod : ModInitializer {
         config.config.mumbleServerHost?.let { mumbleServerHost ->
             log.trace("Updating VoIP location for ${player.name.string}!")
 
-            val dim = Registry.DIMENSION.getId(toDimension)!!
+            val dim = Registry.DIMENSION_TYPE.getId(toDimension)!!
             val dimNamespace = dim.namespace.split('_').joinToString(" ") { it.capitalize() }
             val dimPath = dim.path.split('_').joinToString(" ") { it.capitalize() }
             val dimId = "$dimNamespace $dimPath"
