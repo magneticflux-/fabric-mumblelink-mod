@@ -2,6 +2,7 @@ package com.skaggsm.mumblelinkmod.screen
 
 import com.skaggsm.mumblelinkmod.MumbleLink
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
+import io.github.prospector.modmenu.api.ConfigScreenFactory
 import io.github.prospector.modmenu.api.ModMenuApi
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import net.fabricmc.api.EnvType
@@ -15,6 +16,11 @@ import java.util.function.Function
 @Environment(EnvType.CLIENT)
 class MumbleLinkModMenu : ModMenuApi {
     override fun getModId(): String = MumbleLink.MODID
+
+    override fun getModConfigScreenFactory(): ConfigScreenFactory<*> =
+            ConfigScreenFactory { screen ->
+                AutoConfig.getConfigScreen(MumbleLinkConfig::class.java, screen).get()
+            }
 
     override fun getConfigScreenFactory(): Function<Screen, out Screen> =
             Function { screen ->

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager {
     @Inject(method = "onPlayerConnect", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    private void onPlayerConnect(ClientConnection clientConnection_1, ServerPlayerEntity serverPlayerEntity_1, CallbackInfo ci) {
-        ServerOnConnectCallback.EVENT.invoker().onConnect(serverPlayerEntity_1);
+    private void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+        ServerOnConnectCallback.EVENT.invoker().onConnect(player);
     }
 }

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity {
     @Inject(method = "changeDimension", at = @At(value = "RETURN"))
-    private void onChangeDimension(DimensionType dimensionType_1, CallbackInfoReturnable<Entity> cir) {
-        ServerOnChangeDimensionCallback.EVENT.invoker().onChangeDimension(dimensionType_1, (ServerPlayerEntity) (Object) this);
+    private void onChangeDimension(DimensionType newDimension, CallbackInfoReturnable<Entity> cir) {
+        ServerOnChangeDimensionCallback.EVENT.invoker().onChangeDimension(newDimension, (ServerPlayerEntity) (Object) this);
     }
 }

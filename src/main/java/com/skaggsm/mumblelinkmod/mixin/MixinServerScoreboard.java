@@ -22,17 +22,17 @@ public class MixinServerScoreboard {
     private MinecraftServer server;
 
     @Inject(method = "addPlayerToTeam", at = @At(value = "RETURN", ordinal = 0))
-    private void onAddPlayerToTeam(String string_1, Team team_1, CallbackInfoReturnable<Boolean> cir) {
+    private void onAddPlayerToTeam(String playerName, Team team, CallbackInfoReturnable<Boolean> cir) {
         doOnScoreboardModify();
     }
 
     @Inject(method = "removePlayerFromTeam", at = @At("TAIL"))
-    private void onRemovePlayerFromTeam(String string_1, Team team_1, CallbackInfo ci) {
+    private void onRemovePlayerFromTeam(String playerName, Team team, CallbackInfo ci) {
         doOnScoreboardModify();
     }
 
     @Inject(method = "updateRemovedTeam", at = @At("TAIL"))
-    private void onUpdateRemovedTeam(Team team_1, CallbackInfo ci) {
+    private void onUpdateRemovedTeam(Team team, CallbackInfo ci) {
         doOnScoreboardModify();
     }
 
