@@ -2,14 +2,16 @@ package com.skaggsm.mumblelinkmod
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.MumbleLinkMod.config
 import com.skaggsm.mumblelinkmod.MumbleLinkMod.log
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.IGNORE
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
+import net.fabricmc.fabric.api.network.PacketContext
+import net.minecraft.util.PacketByteBuf
 import net.minecraft.util.math.Vec3d
 import java.awt.Desktop
 import java.net.URI
@@ -30,25 +32,25 @@ private val Vec3d.toLHArray: FloatArray
 object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
-    override fun onInitializeClient() {
-        ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID) { _, bytes ->
-            when (MumbleLinkMod.config.config.mumbleAutoLaunchOption) {
-                ACCEPT -> {
-                    val voipClient = MumbleLinkConfig.VoipClient.values()[bytes.readInt()]
-                    val host = bytes.readString()
-                    val port = bytes.readInt()
-                    val path = bytes.readString().let { if (it == "") null else it }
-                    val query = bytes.readString().let { if (it == "") null else it }
+    private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
+        val voipClient = MumbleLinkConfig.VoipClient.values()[bytes.readInt()]
+        val host = bytes.readString()
+        val port = bytes.readInt()
+        val path = bytes.readString().let { if (it == "") null else it }
+        val query = bytes.readString().let { if (it == "") null else it }
 
-                    try {
-                        val uri = URI(voipClient.scheme, null, host, port, path, query, null)
-                        Desktop.getDesktop().browse(uri)
-                    } catch (e: URISyntaxException) {
-                        log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
-                    }
-                }
-                IGNORE -> {
-                }
+        try {
+            val uri = URI(voipClient.scheme, null, host, port, path, query, null)
+            Desktop.getDesktop().browse(uri)
+        } catch (e: URISyntaxException) {
+            log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
+        }
+    }
+
+    override fun onInitializeClient() {
+        when (config.config.mumbleAutoLaunchOption) {
+            ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID, ClientMumbleLinkMod::packetConsumer)
+            else -> {
             }
         }
 
