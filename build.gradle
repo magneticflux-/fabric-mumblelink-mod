@@ -53,13 +53,13 @@ dependencies {
     modImplementation 'net.fabricmc:fabric-language-kotlin:1.3.71+build.1'
     include 'net.fabricmc:fabric-language-kotlin:1.3.71+build.1'
 
-    modImplementation 'io.github.prospector:modmenu:1.11.1+build.4'
+    modImplementation 'io.github.prospector:modmenu:1.12.1+build.15'
 
-    modImplementation 'me.shedaniel.cloth:config-2:3.3.2-unstable'
-    include 'me.shedaniel.cloth:config-2:3.3.2-unstable'
+    modImplementation 'me.shedaniel.cloth:config-2:4.5.5'
+    include 'me.shedaniel.cloth:config-2:4.5.5'
 
-    modImplementation 'me.sargunvohra.mcmods:autoconfig1u:2.0.1'
-    include 'me.sargunvohra.mcmods:autoconfig1u:2.0.1'
+    modImplementation 'me.sargunvohra.mcmods:autoconfig1u:3.2.0-unstable'
+    include 'me.sargunvohra.mcmods:autoconfig1u:3.2.0-unstable'
 
     modShaded('com.skaggsm:java-mumble-link:0.2.4') {
         exclude group: 'net.java.dev.jna'
@@ -128,7 +128,7 @@ curseforge {
 
     project {
         id = project.curseforge_id
-        releaseType = 'release'
+        releaseType = 'alpha'
         addGameVersion 'Fabric'
         addGameVersion "$project.minecraft_version"
         mainArtifact(remapJar) {

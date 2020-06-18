@@ -11,7 +11,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
-import net.minecraft.util.PacketByteBuf
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.math.Vec3d
 import java.awt.Desktop
 import java.net.URI
@@ -66,7 +66,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
                 // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimension.type.rawId * MumbleLinkMod.config.config.mumbleDimensionYAxisAdjust
+                val yAxisAdjuster = world.dimensionRegistryKey.value.hashCode() * config.config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2

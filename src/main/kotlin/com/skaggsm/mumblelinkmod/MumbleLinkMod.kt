@@ -11,8 +11,8 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.registry.Registry
-import net.minecraft.world.dimension.DimensionType
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.text.MessageFormat
@@ -31,8 +31,8 @@ object MumbleLinkMod : ModInitializer {
             sendVoipPacket(player)
         })
 
-        ServerOnChangeDimensionCallback.EVENT.register(ServerOnChangeDimensionCallback { toDimension, player ->
-            sendVoipPacket(player, toDimension)
+        ServerOnChangeWorldCallback.EVENT.register(ServerOnChangeWorldCallback { toWorld, player ->
+            sendVoipPacket(player, toWorld)
         })
 
         ServerOnTeamsModify.EVENT.register(ServerOnTeamsModify { _, server ->
@@ -44,11 +44,11 @@ object MumbleLinkMod : ModInitializer {
         server.playerManager.playerList.forEach { sendVoipPacket(it) }
     }
 
-    private fun sendVoipPacket(player: ServerPlayerEntity, toDimension: DimensionType = player.dimension) {
+    private fun sendVoipPacket(player: ServerPlayerEntity, toWorld: RegistryKey<World> = player.world.registryKey) {
         config.config.mumbleServerHost?.let { mumbleServerHost ->
             log.trace("Updating VoIP location for ${player.name.string}!")
 
-            val dim = Registry.DIMENSION_TYPE.getId(toDimension)!!
+            val dim = toWorld.value
             val dimNamespace = dim.namespace.split('_').joinToString(" ") { it.capitalize() }
             val dimPath = dim.path.split('_').joinToString(" ") { it.capitalize() }
             val dimId = "$dimNamespace $dimPath"

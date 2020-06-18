@@ -3,19 +3,20 @@ package com.skaggsm.mumblelinkmod;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 
 /**
  * Created by Mitchell Skaggs on 5/29/2019.
  */
 
-public interface ServerOnChangeDimensionCallback {
-    Event<ServerOnChangeDimensionCallback> EVENT = EventFactory.createArrayBacked(ServerOnChangeDimensionCallback.class, (listeners) ->
+public interface ServerOnChangeWorldCallback {
+    Event<ServerOnChangeWorldCallback> EVENT = EventFactory.createArrayBacked(ServerOnChangeWorldCallback.class, (listeners) ->
             EventFactory.isProfilingEnabled() ?
                     (toDimension, player) -> {
                         player.server.getProfiler().push("fabricServerOnChangeDimension");
 
-                        for (ServerOnChangeDimensionCallback event : listeners) {
+                        for (ServerOnChangeWorldCallback event : listeners) {
                             player.server.getProfiler().push(EventFactory.getHandlerName(event));
                             event.onChangeDimension(toDimension, player);
                             player.server.getProfiler().pop();
@@ -24,11 +25,11 @@ public interface ServerOnChangeDimensionCallback {
                         player.server.getProfiler().pop();
                     } :
                     (toDimension, player) -> {
-                        for (ServerOnChangeDimensionCallback event : listeners) {
+                        for (ServerOnChangeWorldCallback event : listeners) {
                             event.onChangeDimension(toDimension, player);
                         }
 
                     });
 
-    void onChangeDimension(DimensionType toDimension, ServerPlayerEntity player);
+    void onChangeDimension(RegistryKey<World> toDimension, ServerPlayerEntity player);
 }
