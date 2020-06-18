@@ -43,7 +43,8 @@
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
-    "fabric-language-kotlin": ">=1.3.30"
+    "fabric-language-kotlin": ">=1.3.30",
+    "minecraft": ">=1.16-pre8"
   },
   "custom": {
     "modmenu:clientsideOnly": false
