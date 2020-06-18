@@ -130,7 +130,7 @@ curseforge {
         id = project.curseforge_id
         releaseType = 'alpha'
         addGameVersion 'Fabric'
-        addGameVersion "$project.minecraft_version"
+        addGameVersion '1.16-Snapshot' //"$project.minecraft_version"
         mainArtifact(remapJar) {
             displayName = "$archives_base_name-$project.version [$project.minecraft_version]"
             relations {
