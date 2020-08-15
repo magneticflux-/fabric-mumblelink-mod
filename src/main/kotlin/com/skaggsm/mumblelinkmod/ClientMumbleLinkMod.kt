@@ -8,7 +8,7 @@ import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
 import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.network.SendMumbleURL
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.fabric.api.event.client.ClientTickCallback
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
@@ -33,7 +33,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
-        val voipClient = MumbleLinkConfig.VoipClient.values()[bytes.readInt()]
+        val voipClient = bytes.readEnumConstant(MumbleLinkConfig.VoipClient::class.java)
         val host = bytes.readString()
         val port = bytes.readInt()
         val path = bytes.readString().let { if (it == "") null else it }
@@ -54,7 +54,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
             }
         }
 
-        ClientTickCallback.EVENT.register(ClientTickCallback {
+        ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick {
             val world = it.world
             val player = it.player
 
@@ -66,7 +66,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
                 // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimensionRegistryKey.value.hashCode() * config.config.mumbleDimensionYAxisAdjust
+                val yAxisAdjuster = world.dimension.hashCode() * config.config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
