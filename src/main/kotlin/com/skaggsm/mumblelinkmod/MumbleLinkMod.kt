@@ -7,8 +7,8 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.registry.RegistryKey
@@ -63,13 +63,13 @@ object MumbleLinkMod : ModInitializer {
             val query: String = config.config.mumbleServerQuery?.let { MessageFormat.format(it, *templateParams) } ?: ""
 
             val buf = PacketByteBuf(Unpooled.buffer())
-            buf.writeInt(config.config.voipClient.ordinal)
+            buf.writeEnumConstant(config.config.voipClient)
             buf.writeString(host)
             buf.writeInt(port)
             buf.writeString(path)
             buf.writeString(query)
 
-            player.networkHandler.sendPacket(CustomPayloadS2CPacket(SendMumbleURL.ID, buf))
+            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SendMumbleURL.ID, buf)
         }
     }
 }
