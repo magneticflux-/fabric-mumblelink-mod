@@ -2,12 +2,12 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '0.4-SNAPSHOT'
-    id 'com.github.ben-manes.versions' version '0.29.0'
+    id 'fabric-loom' version '0.5.34'
+    id 'com.github.ben-manes.versions' version '0.33.0'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.kotlin.jvm' version '1.3.72'
-    id 'org.shipkit.java' version '2.3.4'
+    id 'org.shipkit.java' version '2.3.5'
 }
 
 configurations {
@@ -55,11 +55,11 @@ dependencies {
 
     modImplementation 'io.github.prospector:modmenu:1.14.6+build.31'
 
-    modImplementation 'me.shedaniel.cloth:config-2:4.7.0-unstable'
-    include 'me.shedaniel.cloth:config-2:4.7.0-unstable'
+    modImplementation 'me.shedaniel.cloth:config-2:4.8.2'
+    include 'me.shedaniel.cloth:config-2:4.8.2'
 
-    modImplementation 'me.sargunvohra.mcmods:autoconfig1u:3.2.0-unstable'
-    include 'me.sargunvohra.mcmods:autoconfig1u:3.2.0-unstable'
+    modImplementation 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
+    include 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
 
     modShaded('com.skaggsm:java-mumble-link:0.2.4') {
         exclude group: 'net.java.dev.jna'
