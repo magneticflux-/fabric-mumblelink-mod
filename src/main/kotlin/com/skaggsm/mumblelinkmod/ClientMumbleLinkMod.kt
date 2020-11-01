@@ -11,9 +11,12 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.math.Vec3d
+import org.lwjgl.system.Platform
 import java.awt.Desktop
+import java.awt.GraphicsEnvironment
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -41,6 +44,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
         try {
             val uri = URI(voipClient.scheme, null, host, port, path, query, null)
+            ensureNotHeadless()
             Desktop.getDesktop().browse(uri)
         } catch (e: URISyntaxException) {
             log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
@@ -116,8 +120,24 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
     }
 
+    private fun ensureNotHeadless() {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.err.println("Unable to unset headless earlier (are you using OptiFine?), doing it with nasty reflection now!")
+            val headlessField = GraphicsEnvironment::class.java.getDeclaredField("headless")
+            headlessField.isAccessible = true
+            headlessField[null] = false
+        }
+    }
+
     init {
-        // Required to open URIs
-        System.setProperty("java.awt.headless", "false")
+        // OptiFine needs java.awt.headless=true on Mac because it accidentally uses an AWT class that triggers JNI stuff on load if not headless.
+        // That JNI stuff fails on Mac because of course it does, so we skip it now and set java.awt.headless=false on-demand later (after OptiFine already triggered the AWT "booby-trap".
+        if (FabricLoader.getInstance().isModLoaded("optifabric") && Platform.get() == Platform.MACOSX) {
+            System.err.println("OptiFine needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
+        } else {
+            // If Optifine isn't loaded, we can just set it here and skip the hassle later.
+            // Required to open URIs
+            System.setProperty("java.awt.headless", "false")
+        }
     }
 }
