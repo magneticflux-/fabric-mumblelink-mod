@@ -21,16 +21,16 @@ Planned features:
 ## Mumble
 
 1. Install and start Mumble
-2. Enable "Link to Game and Transmit Position"
-3. Join a server
-4. Join a game!
+2. Enable "Link to Game and Transmit Position" in Mumble
+3. Join a Mumble server
+4. Join a Minecraft world!
 
 ## TeamSpeak
 
 1. Install and start TeamSpeak
-2. Enable the CrossTalk plugin
-3. Join a server
-4. Join a game!
+2. Enable the CrossTalk plugin in TeamSpeak
+3. Join a Teamspeak server
+4. Join a Minecraft world!
 
 # For server operators
 
