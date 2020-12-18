@@ -5,6 +5,13 @@
       <inspection_tool class="GrazieCommit" enabled="false" level="TYPO" enabled_by_default="false" />
     </profile>
   </component>
+  <component name="GithubSharedProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="release\/.*" />
+      </list>
+    </option>
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
