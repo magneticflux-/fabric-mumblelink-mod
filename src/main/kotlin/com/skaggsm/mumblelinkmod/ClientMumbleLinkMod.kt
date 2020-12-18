@@ -37,13 +37,15 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
     private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
         val voipClient = bytes.readEnumConstant(MumbleLinkConfig.VoipClient::class.java)
-        val host = bytes.readString()
+        val hostParts = bytes.readString().split('@', limit = 2)
+        val host = hostParts.last()
+        val userinfo = if (hostParts.size > 1) hostParts.first() else null
         val port = bytes.readInt()
         val path = bytes.readString().let { if (it == "") null else it }
         val query = bytes.readString().let { if (it == "") null else it }
 
         try {
-            val uri = URI(voipClient.scheme, null, host, port, path, query, null)
+            val uri = URI(voipClient.scheme, userinfo, host, port, path, query, null)
             ensureNotHeadless()
             Desktop.getDesktop().browse(uri)
         } catch (e: URISyntaxException) {
