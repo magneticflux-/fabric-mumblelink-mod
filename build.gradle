@@ -50,13 +50,19 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation 'net.fabricmc:fabric-language-kotlin:1.4.21+build.1'
-    include 'net.fabricmc:fabric-language-kotlin:1.4.21+build.1'
+    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
+    include "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
 
-    modImplementation 'io.github.prospector:modmenu:1.14.13+build.22'
+    modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
 
-    modImplementation 'me.shedaniel.cloth:config-2:4.8.3'
-    include 'me.shedaniel.cloth:config-2:4.8.3'
+    modImplementation "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
+    include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
+
+    modImplementation "me.shedaniel.cloth:fiber2cloth:${project.fiber_2_cloth_version}"
+    include "me.shedaniel.cloth:fiber2cloth:${project.fiber_2_cloth_version}"
+
+    modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
+    include "me.zeroeightsix:fiber:${project.fiber_version}"
 
     modImplementation 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
     include 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
