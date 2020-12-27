@@ -1,33 +1,24 @@
-package com.skaggsm.mumblelinkmod
+package com.skaggsm.mumblelinkmod.client
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
-import com.skaggsm.mumblelinkmod.MumbleLinkMod.config
-import com.skaggsm.mumblelinkmod.MumbleLinkMod.log
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
-import com.skaggsm.mumblelinkmod.network.SendMumbleURL
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.config
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.log
+import com.skaggsm.mumblelinkmod.main.OldConfig
+import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
+import com.skaggsm.mumblelinkmod.main.SendMumbleURL
+import com.skaggsm.mumblelinkmod.toLHArray
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.util.math.Vec3d
 import org.lwjgl.system.Platform
 import java.awt.Desktop
 import java.awt.GraphicsEnvironment
 import java.net.URI
 import java.net.URISyntaxException
-
-/**
- * Convert to a float 3-array in a left-handed coordinate system.
- * Minecraft is right-handed by default, Mumble needs left-handed.
- *
- * @see <a href="https://wiki.mumble.info/wiki/Link#Coordinate_system">Coordinate system</a>
- */
-private val Vec3d.toLHArray: FloatArray
-    get() = floatArrayOf(x.toFloat(), y.toFloat(), -z.toFloat())
 
 /**
  * Created by Mitchell Skaggs on 5/12/2019.
@@ -36,7 +27,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
-        val voipClient = bytes.readEnumConstant(MumbleLinkConfig.VoipClient::class.java)
+        val voipClient = bytes.readEnumConstant(OldConfig.VoipClient::class.java)
         val hostParts = bytes.readString().split('@', limit = 2)
         val host = hostParts.last()
         val userinfo = if (hostParts.size > 1) hostParts.first() else null
@@ -53,6 +44,9 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
     }
 
+    /**
+     * Runs after [MainMumbleLinkMod.onInitialize].
+     */
     override fun onInitializeClient() {
         when (config.config.mumbleAutoLaunchOption) {
             ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID, ClientMumbleLinkMod::packetConsumer)

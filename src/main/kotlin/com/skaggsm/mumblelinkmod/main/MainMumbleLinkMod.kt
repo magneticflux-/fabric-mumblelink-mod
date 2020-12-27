@@ -1,7 +1,8 @@
-package com.skaggsm.mumblelinkmod
+package com.skaggsm.mumblelinkmod.main
 
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig
-import com.skaggsm.mumblelinkmod.network.SendMumbleURL
+import com.skaggsm.mumblelinkmod.ServerOnChangeWorldCallback
+import com.skaggsm.mumblelinkmod.ServerOnConnectCallback
+import com.skaggsm.mumblelinkmod.ServerOnTeamsModify
 import io.netty.buffer.Unpooled
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
@@ -20,12 +21,14 @@ import java.text.MessageFormat
 /**
  * Created by Mitchell Skaggs on 5/29/2019.
  */
-object MumbleLinkMod : ModInitializer {
-    val log: Logger = LogManager.getLogger(MumbleLink.MODID)
-    lateinit var config: ConfigHolder<MumbleLinkConfig>
+object MainMumbleLinkMod : ModInitializer {
+    const val MODID: String = "fabric-mumblelink-mod"
+    val log: Logger = LogManager.getLogger(MODID)
+    lateinit var config: ConfigHolder<OldConfig>
 
     override fun onInitialize() {
-        config = AutoConfig.register(MumbleLinkConfig::class.java, ::Toml4jConfigSerializer)
+        val oldConfig = AutoConfig.register(OldConfig::class.java, ::Toml4jConfigSerializer)
+        config = oldConfig
 
         ServerOnConnectCallback.EVENT.register(ServerOnConnectCallback { player ->
             sendVoipPacket(player)

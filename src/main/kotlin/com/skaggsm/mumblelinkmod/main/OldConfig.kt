@@ -1,7 +1,7 @@
-package com.skaggsm.mumblelinkmod.config
+package com.skaggsm.mumblelinkmod.main
 
-import com.skaggsm.mumblelinkmod.MumbleLink
-import com.skaggsm.mumblelinkmod.config.MumbleLinkConfig.AutoLaunchOption.ACCEPT
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.MODID
+import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry
@@ -9,8 +9,8 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry
 /**
  * Created by Mitchell Skaggs on 5/30/2019.
  */
-@Config(name = MumbleLink.MODID)
-class MumbleLinkConfig : ConfigData {
+@Config(name = MODID)
+class OldConfig : ConfigData {
     @ConfigEntry.Category("client")
     var mumbleAutoLaunchOption: AutoLaunchOption = ACCEPT
 
