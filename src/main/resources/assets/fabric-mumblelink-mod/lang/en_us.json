@@ -2,7 +2,7 @@
   "config.fabric-mumblelink-mod.title": "MumbleLink Config",
   "config.fabric-mumblelink-mod.client": "Client",
   "config.fabric-mumblelink-mod.main": "Main",
-  "config.fabric-mumblelink-mod.mumbleAutoLaunchOption": "The action to take when a VoIP server is provided. (Requires restart!)",
+  "config.fabric-mumblelink-mod.mumbleAutoLaunchOption": "The action to take when a VoIP server is provided.",
   "config.fabric-mumblelink-mod.voipClient": "The VoIP client to launch.",
   "config.fabric-mumblelink-mod.mumbleServerHost": "The VoIP server host.",
   "config.fabric-mumblelink-mod.mumbleServerPort": "The VoIP server port.",
