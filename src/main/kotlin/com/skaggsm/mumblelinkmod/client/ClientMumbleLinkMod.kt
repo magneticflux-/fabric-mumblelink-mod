@@ -2,13 +2,22 @@ package com.skaggsm.mumblelinkmod.client
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
-import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.config
-import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.log
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.LOG
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.SERIALIZER
 import com.skaggsm.mumblelinkmod.main.OldConfig
 import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.main.SendMumbleURL
 import com.skaggsm.mumblelinkmod.toLHArray
+import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings
+import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
+import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
+import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree
+import io.github.fablabsmc.fablabs.impl.fiber.tree.ConfigBranchImpl
+import me.shedaniel.fiber2cloth.api.Fiber2Cloth
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.api.EnvType.CLIENT
+import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
@@ -19,11 +28,25 @@ import java.awt.Desktop
 import java.awt.GraphicsEnvironment
 import java.net.URI
 import java.net.URISyntaxException
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.div
 
 /**
  * Created by Mitchell Skaggs on 5/12/2019.
  */
+@OptIn(ExperimentalPathApi::class)
+@Environment(CLIENT)
 object ClientMumbleLinkMod : ClientModInitializer {
+    // Config files
+    private val configFile = MainMumbleLinkMod.configFolder / "fabric-mumblelink-mod-client.json"
+
+    // Configs
+    lateinit var config: ClientConfig
+    lateinit var configTree: ConfigBranch
+    lateinit var unionConfigTree: ConfigBranch
+
     private var mumble: MumbleLink? = null
 
     private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
@@ -40,7 +63,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
             ensureNotHeadless()
             Desktop.getDesktop().browse(uri)
         } catch (e: URISyntaxException) {
-            log.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
+            LOG.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
         }
     }
 
@@ -48,7 +71,57 @@ object ClientMumbleLinkMod : ClientModInitializer {
      * Runs after [MainMumbleLinkMod.onInitialize].
      */
     override fun onInitializeClient() {
-        when (config.config.mumbleAutoLaunchOption) {
+        setupConfig()
+        setupEvents()
+    }
+
+    private fun setupConfig() {
+        config = ClientConfig()
+
+        MainMumbleLinkMod.oldConfig?.let {
+            config.mumbleAutoLaunchOption = it.mumbleAutoLaunchOption
+            config.mumbleDimensionYAxisAdjust = it.mumbleDimensionYAxisAdjust
+        }
+
+        configTree = ConfigTree.builder().applyFromPojo(config, createSettings()).withName("client").build()
+        unionConfigTree = ConfigBranchImpl("union", null)
+        unionConfigTree.items.add(configTree)
+        unionConfigTree.items.add(MainMumbleLinkMod.configTree)
+
+        if (Files.notExists(configFile)) {
+            serialize()
+        }
+
+        // Verify save worked
+        deserialize()
+    }
+
+
+    fun serialize() {
+        FiberSerialization.serialize(
+            configTree,
+            Files.newOutputStream(configFile, WRITE, CREATE),
+            SERIALIZER
+        )
+    }
+
+    fun deserialize() {
+        FiberSerialization.deserialize(
+            configTree,
+            Files.newInputStream(configFile, READ),
+            SERIALIZER
+        )
+    }
+
+    fun createSettings(): AnnotatedSettings {
+        val settingsBuilder = AnnotatedSettings.builder()
+        if (FabricLoader.getInstance().environmentType == CLIENT)
+            Fiber2Cloth.configure(settingsBuilder)
+        return settingsBuilder.build()
+    }
+
+    private fun setupEvents() {
+        when (config.mumbleAutoLaunchOption) {
             ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID, ClientMumbleLinkMod::packetConsumer)
             else -> {
             }
@@ -66,7 +139,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
                 // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimension.hashCode() * config.config.mumbleDimensionYAxisAdjust
+                val yAxisAdjuster = world.dimension.hashCode() * config.mumbleDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
@@ -99,26 +172,26 @@ object ClientMumbleLinkMod : ClientModInitializer {
         if (localMumble != null)
             return localMumble
 
-        log.info("Linking to VoIP client...")
+        LOG.info("Linking to VoIP client...")
         localMumble = MumbleLinkImpl()
         mumble = localMumble
-        log.info("Linked")
+        LOG.info("Linked")
 
         return localMumble
     }
 
     private fun ensureClosed() {
         if (mumble != null) {
-            log.info("Unlinking from VoIP client...")
+            LOG.info("Unlinking from VoIP client...")
             mumble?.close()
             mumble = null
-            log.info("Unlinked")
+            LOG.info("Unlinked")
         }
     }
 
     private fun ensureNotHeadless() {
         if (GraphicsEnvironment.isHeadless()) {
-            System.err.println("Unable to unset headless earlier (are you using OptiFine?), doing it with nasty reflection now!")
+            LOG.error("Unable to unset headless earlier (are you using OptiFine?), doing it with nasty reflection now!")
             val headlessField = GraphicsEnvironment::class.java.getDeclaredField("headless")
             headlessField.isAccessible = true
             headlessField[null] = false
@@ -126,10 +199,10 @@ object ClientMumbleLinkMod : ClientModInitializer {
     }
 
     init {
-        // OptiFine needs java.awt.headless=true on Mac because it accidentally uses an AWT class that triggers JNI stuff on load if not headless.
-        // That JNI stuff fails on Mac because of course it does, so we skip it now and set java.awt.headless=false on-demand later (after OptiFine already triggered the AWT "booby-trap".
+        // OptiFine needs java.awt.headless=true on Mac because it accidentally uses an AWT class that triggers JNI stuff on classload if not headless.
+        // That JNI stuff fails on Mac because of course it does, so we skip settings java.awt.headless=false now and set it on-demand later (hopefully after OptiFine already triggered the AWT "booby-trap").
         if (FabricLoader.getInstance().isModLoaded("optifabric") && Platform.get() == Platform.MACOSX) {
-            System.err.println("OptiFine needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
+            LOG.error("OptiFine needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
         } else {
             // If Optifine isn't loaded, we can just set it here and skip the hassle later.
             // Required to open URIs
