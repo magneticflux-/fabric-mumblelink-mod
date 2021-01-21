@@ -25,6 +25,9 @@ Planned features:
 3. Join a Mumble server
 4. Join a Minecraft world!
 
+### Troubleshooting (IMPORTANT)
+If you have issues, try these steps first: https://github.com/magneticflux-/fabric-mumblelink-mod/wiki/Troubleshooting
+
 ## TeamSpeak
 
 1. Install and start TeamSpeak
