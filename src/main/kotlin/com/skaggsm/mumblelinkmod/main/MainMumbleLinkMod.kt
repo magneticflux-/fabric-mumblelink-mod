@@ -64,11 +64,16 @@ object MainMumbleLinkMod : ModInitializer {
         config = MainConfig()
 
         oldConfig?.let {
-            config.voipClient = it.voipClient
-            config.mumbleServerHost = it.mumbleServerHost ?: ""
-            config.mumbleServerPort = it.mumbleServerPort ?: 0
-            config.mumbleServerPath = it.mumbleServerPath ?: ""
-            config.mumbleServerQuery = it.mumbleServerQuery ?: ""
+            config.voipClient = it.voipClient.updated()
+
+            // Special handling of old-style username/password combos
+            val hostParts = it.mumbleServerHost?.split('@', limit = 2)
+            config.voipServerHost = hostParts?.last() ?: ""
+            config.voipServerUserinfo = if (hostParts != null && hostParts.size > 1) hostParts.first() else ""
+
+            config.voipServerPort = it.mumbleServerPort ?: -1
+            config.voipServerPath = it.mumbleServerPath ?: ""
+            config.voipServerQuery = it.mumbleServerQuery ?: ""
         }
 
         configTree = ConfigTree.builder().applyFromPojo(config, createSettings()).withName("main").build()
@@ -143,17 +148,21 @@ object MainMumbleLinkMod : ModInitializer {
 
         val templateParams: Array<Any> = arrayOf(dimId, dimNamespace, dimPath, teamName)
 
-        val host: String = config.mumbleServerHost
-        val port: Int = config.mumbleServerPort
-        val path: String = MessageFormat.format(config.mumbleServerPath, *templateParams)
-        val query: String = MessageFormat.format(config.mumbleServerQuery, *templateParams)
+        val userinfo: String = config.voipServerUserinfo
+        val host: String = config.voipServerHost
+        val port: Int = config.voipServerPort
+        val path: String = MessageFormat.format(config.voipServerPath, *templateParams)
+        val query: String = MessageFormat.format(config.voipServerQuery, *templateParams)
+        val fragment: String = config.voipServerFragment
 
         val buf = PacketByteBuf(Unpooled.buffer())
         buf.writeEnumConstant(config.voipClient)
+        buf.writeString(userinfo)
         buf.writeString(host)
         buf.writeInt(port)
         buf.writeString(path)
         buf.writeString(query)
+        buf.writeString(fragment)
 
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SendMumbleURL.ID, buf)
     }

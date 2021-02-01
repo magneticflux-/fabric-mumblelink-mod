@@ -8,6 +8,6 @@ import net.minecraft.util.Identifier
  */
 interface SendMumbleURL {
     companion object {
-        val ID = Identifier(MODID, "broadcast_mumble_url")
+        val ID = Identifier(MODID, "broadcast_mumble_url_v2")
     }
 }

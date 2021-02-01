@@ -1,5 +1,6 @@
 package com.skaggsm.mumblelinkmod.main
 
+import com.skaggsm.mumblelinkmod.client.ClientConfig
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.MODID
 import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData
@@ -40,5 +41,19 @@ class OldConfig : ConfigData {
     enum class VoipClient(val scheme: String) {
         MUMBLE("mumble"),
         TEAMSPEAK("ts3server")
+    }
+}
+
+fun OldConfig.VoipClient.updated(): MainConfig.VoipClient {
+    return when (this) {
+        OldConfig.VoipClient.MUMBLE -> MainConfig.VoipClient.MUMBLE
+        OldConfig.VoipClient.TEAMSPEAK -> MainConfig.VoipClient.TEAMSPEAK
+    }
+}
+
+fun OldConfig.AutoLaunchOption.updated(): ClientConfig.AutoLaunchOption {
+    return when (this) {
+        OldConfig.AutoLaunchOption.IGNORE -> ClientConfig.AutoLaunchOption.IGNORE
+        OldConfig.AutoLaunchOption.ACCEPT -> ClientConfig.AutoLaunchOption.ACCEPT
     }
 }

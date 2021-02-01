@@ -2,12 +2,13 @@ package com.skaggsm.mumblelinkmod.client
 
 import com.skaggsm.jmumblelink.MumbleLink
 import com.skaggsm.jmumblelink.MumbleLinkImpl
+import com.skaggsm.mumblelinkmod.client.ClientConfig.AutoLaunchOption
+import com.skaggsm.mumblelinkmod.main.MainConfig
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.LOG
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.SERIALIZER
-import com.skaggsm.mumblelinkmod.main.OldConfig
-import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
 import com.skaggsm.mumblelinkmod.main.SendMumbleURL
+import com.skaggsm.mumblelinkmod.main.updated
 import com.skaggsm.mumblelinkmod.toLHArray
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
@@ -50,20 +51,22 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private var mumble: MumbleLink? = null
 
     private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
-        val voipClient = bytes.readEnumConstant(OldConfig.VoipClient::class.java)
-        val hostParts = bytes.readString().split('@', limit = 2)
-        val host = hostParts.last()
-        val userinfo = if (hostParts.size > 1) hostParts.first() else null
+        val voipClient = bytes.readEnumConstant(MainConfig.VoipClient::class.java)
+        val userinfo = bytes.readString().ifEmpty { null }
+        val host = bytes.readString().ifEmpty { null }
         val port = bytes.readInt()
-        val path = bytes.readString().let { if (it == "") null else it }
-        val query = bytes.readString().let { if (it == "") null else it }
+        val path = bytes.readString().ifEmpty { null }
+        val query = bytes.readString().ifEmpty { null }
+        val fragment = bytes.readString().ifEmpty { null }
 
         try {
-            val uri = URI(voipClient.scheme, userinfo, host, port, path, query, null)
+            val uri = URI(voipClient.scheme, userinfo, host, port, path, query, fragment)
             ensureNotHeadless()
             Desktop.getDesktop().browse(uri)
         } catch (e: URISyntaxException) {
             LOG.warn("Ignoring invalid VoIP client URI \"${e.input}\"")
+        } catch (e: UnsupportedOperationException) {
+            LOG.warn("Unable to use the \"BROWSE\" intent to open your VoIP client automatically! Check that you aren't using a headless or server JVM.")
         }
     }
 
@@ -79,8 +82,8 @@ object ClientMumbleLinkMod : ClientModInitializer {
         config = ClientConfig()
 
         MainMumbleLinkMod.oldConfig?.let {
-            config.mumbleAutoLaunchOption = it.mumbleAutoLaunchOption
-            config.mumbleDimensionYAxisAdjust = it.mumbleDimensionYAxisAdjust
+            config.clientAutoLaunchOption = it.mumbleAutoLaunchOption.updated()
+            config.clientDimensionYAxisAdjust = it.mumbleDimensionYAxisAdjust
         }
 
         configTree = ConfigTree.builder().applyFromPojo(config, createSettings()).withName("client").build()
@@ -121,8 +124,11 @@ object ClientMumbleLinkMod : ClientModInitializer {
     }
 
     private fun setupEvents() {
-        when (config.mumbleAutoLaunchOption) {
-            ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(SendMumbleURL.ID, ClientMumbleLinkMod::packetConsumer)
+        when (config.clientAutoLaunchOption) {
+            AutoLaunchOption.ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(
+                SendMumbleURL.ID,
+                ClientMumbleLinkMod::packetConsumer
+            )
             else -> {
             }
         }
@@ -139,7 +145,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                 val camTop = floatArrayOf(0f, 1f, 0f)
 
                 // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimension.hashCode() * config.mumbleDimensionYAxisAdjust
+                val yAxisAdjuster = world.dimension.hashCode() * config.clientDimensionYAxisAdjust
                 camPos[1] += yAxisAdjuster
 
                 mumble.uiVersion = 2
