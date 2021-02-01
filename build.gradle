@@ -17,13 +17,12 @@ configurations {
 
 repositories {
     maven {
-        url = 'http://maven.fabricmc.net/'
+        url = 'https://maven.fabricmc.net/'
         name = 'Fabric'
     }
     maven { url = 'https://dl.bintray.com/magneticflux/maven' }
     maven { url = 'https://dl.bintray.com/shedaniel/autoconfig1u/' }
     jcenter()
-    mavenLocal()
 }
 
 // Enable Java 8 language features
