@@ -1,12 +1,14 @@
 {
   "config.fabric-mumblelink-mod.title": "MumbleLink Config",
   "config.fabric-mumblelink-mod.client": "Client",
-  "config.fabric-mumblelink-mod.main": "Main",
-  "config.fabric-mumblelink-mod.mumbleAutoLaunchOption": "The action to take when a VoIP server is provided.",
+  "config.fabric-mumblelink-mod.main": "Server",
+  "config.fabric-mumblelink-mod.clientAutoLaunchOption": "The action to take when a VoIP server is provided.",
+  "config.fabric-mumblelink-mod.clientDimensionYAxisAdjust": "Multiplier for dimension IDs for a Y-axis offset. Ask your server owner for its value (typically 512).",
   "config.fabric-mumblelink-mod.voipClient": "The VoIP client to launch.",
-  "config.fabric-mumblelink-mod.mumbleServerHost": "The VoIP server host.",
-  "config.fabric-mumblelink-mod.mumbleServerPort": "The VoIP server port.",
-  "config.fabric-mumblelink-mod.mumbleServerPath": "The VoIP server path. Supports templating, see readme.",
-  "config.fabric-mumblelink-mod.mumbleServerQuery": "The VoIP server query. Supports templating, see readme.",
-  "config.fabric-mumblelink-mod.mumbleDimensionYAxisAdjust": "Y-Axis multiplier for dimension IDs. Usually leave it at 0."
+  "config.fabric-mumblelink-mod.voipServerUserinfo": "The VoIP server userinfo.",
+  "config.fabric-mumblelink-mod.voipServerHost": "The VoIP server host.",
+  "config.fabric-mumblelink-mod.voipServerPort": "The VoIP server port.",
+  "config.fabric-mumblelink-mod.voipServerPath": "The VoIP server path. Supports templating, see readme.",
+  "config.fabric-mumblelink-mod.voipServerQuery": "The VoIP server query. Supports templating, see readme.",
+  "config.fabric-mumblelink-mod.voipServerFragment": "The VoIP server fragment."
 }
