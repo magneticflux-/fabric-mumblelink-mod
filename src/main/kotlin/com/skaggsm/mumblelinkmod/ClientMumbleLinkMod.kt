@@ -61,40 +61,42 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
 
         ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick {
-            val world = it.world
-            val player = it.player
+            if (!it.isIntegratedServerRunning) {
+                val world = it.world
+                val player = it.player
 
-            if (world != null && player != null) {
-                val mumble = ensureLinked()
+                if (world != null && player != null) {
+                    val mumble = ensureLinked()
 
-                val camPos = player.getCameraPosVec(1F).toLHArray
-                val camDir = player.rotationVecClient.toLHArray
-                val camTop = floatArrayOf(0f, 1f, 0f)
+                    val camPos = player.getCameraPosVec(1F).toLHArray
+                    val camDir = player.rotationVecClient.toLHArray
+                    val camTop = floatArrayOf(0f, 1f, 0f)
 
-                // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimension.hashCode() * config.config.mumbleDimensionYAxisAdjust
-                camPos[1] += yAxisAdjuster
+                    // Make people in other dimensions far away so that they're muted.
+                    val yAxisAdjuster = world.dimension.hashCode() * config.config.mumbleDimensionYAxisAdjust
+                    camPos[1] += yAxisAdjuster
 
-                mumble.uiVersion = 2
-                mumble.uiTick++
+                    mumble.uiVersion = 2
+                    mumble.uiTick++
 
-                mumble.avatarPosition = camPos
-                mumble.avatarFront = camDir
-                mumble.avatarTop = camTop
+                    mumble.avatarPosition = camPos
+                    mumble.avatarFront = camDir
+                    mumble.avatarTop = camTop
 
-                mumble.name = "Minecraft Mumble Link Mod"
+                    mumble.name = "Minecraft Mumble Link Mod"
 
-                mumble.cameraPosition = camPos
-                mumble.cameraFront = camDir
-                mumble.cameraTop = camTop
+                    mumble.cameraPosition = camPos
+                    mumble.cameraFront = camDir
+                    mumble.cameraTop = camTop
 
-                mumble.identity = player.uuidAsString
+                    mumble.identity = player.uuidAsString
 
-                mumble.context = "Minecraft"
+                    mumble.context = "Minecraft"
 
-                mumble.description = "A Minecraft mod that provides position data to VoIP clients."
-            } else {
-                ensureClosed()
+                    mumble.description = "A Minecraft mod that provides position data to VoIP clients."
+                } else {
+                    ensureClosed()
+                }
             }
         })
     }
