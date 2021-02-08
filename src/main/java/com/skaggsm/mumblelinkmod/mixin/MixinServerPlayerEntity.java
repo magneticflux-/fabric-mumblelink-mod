@@ -1,5 +1,6 @@
 package com.skaggsm.mumblelinkmod.mixin;
 
+import com.skaggsm.mumblelinkmod.ClientMumbleLinkModKt;
 import com.skaggsm.mumblelinkmod.ServerOnChangeWorldCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
@@ -21,7 +22,7 @@ public abstract class MixinServerPlayerEntity {
 
     @Inject(method = "moveToWorld", at = @At(value = "RETURN"))
     private void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        if (server.isDedicated())
+        if (server.isDedicated() || ClientMumbleLinkModKt.getOpenedLan())
             ServerOnChangeWorldCallback.EVENT.invoker().onChangeDimension(destination.getRegistryKey(), (ServerPlayerEntity) (Object) this);
     }
 }

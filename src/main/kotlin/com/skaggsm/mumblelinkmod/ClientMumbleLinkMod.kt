@@ -20,6 +20,8 @@ import java.awt.GraphicsEnvironment
 import java.net.URI
 import java.net.URISyntaxException
 
+var openedLan: Boolean = false
+
 /**
  * Convert to a float 3-array in a left-handed coordinate system.
  * Minecraft is right-handed by default, Mumble needs left-handed.
@@ -61,11 +63,11 @@ object ClientMumbleLinkMod : ClientModInitializer {
         }
 
         ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick {
-            if (!it.isIntegratedServerRunning) {
-                val world = it.world
-                val player = it.player
+            val world = it.world
+            val player = it.player
 
-                if (world != null && player != null) {
+            if (world != null && player != null) {
+                if (!it.isIntegratedServerRunning || openedLan) {
                     val mumble = ensureLinked()
 
                     val camPos = player.getCameraPosVec(1F).toLHArray
@@ -94,9 +96,9 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     mumble.context = "Minecraft"
 
                     mumble.description = "A Minecraft mod that provides position data to VoIP clients."
-                } else {
-                    ensureClosed()
                 }
+            } else {
+                ensureClosed()
             }
         })
     }
@@ -121,6 +123,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
             mumble?.close()
             mumble = null
             log.info("Unlinked")
+            openedLan = false
         }
     }
 

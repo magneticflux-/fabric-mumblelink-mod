@@ -1,5 +1,6 @@
 package com.skaggsm.mumblelinkmod.mixin;
 
+import com.skaggsm.mumblelinkmod.ClientMumbleLinkModKt;
 import com.skaggsm.mumblelinkmod.ServerOnConnectCallback;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +23,7 @@ public class MixinPlayerManager {
 
     @Inject(method = "onPlayerConnect", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        if (server.isDedicated())
+        if (server.isDedicated() || ClientMumbleLinkModKt.getOpenedLan())
             ServerOnConnectCallback.EVENT.invoker().onConnect(player);
     }
 }
