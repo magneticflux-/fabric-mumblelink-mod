@@ -3,6 +3,7 @@
   "package": "com.skaggsm.mumblelinkmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AWTHackMixin",
     "MixinPlayerManager",
     "MixinServerPlayerEntity",
     "MixinServerScoreboard"
