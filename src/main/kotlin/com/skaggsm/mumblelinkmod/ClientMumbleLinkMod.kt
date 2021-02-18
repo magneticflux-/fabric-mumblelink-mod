@@ -11,12 +11,11 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.fabricmc.fabric.api.network.PacketContext
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.math.Vec3d
-import org.lwjgl.system.Platform
 import java.awt.Desktop
 import java.awt.GraphicsEnvironment
+import java.awt.Toolkit
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -128,6 +127,12 @@ object ClientMumbleLinkMod : ClientModInitializer {
             val headlessField = GraphicsEnvironment::class.java.getDeclaredField("headless")
             headlessField.isAccessible = true
             headlessField[null] = false
+        }
+        if (!Desktop.isDesktopSupported()) {
+            System.err.println("Desktop isn't supported, a Toolkit might have been initialized before we could set headless=false! Resetting the Toolkit with nasty reflection now!")
+            val toolkitField = Toolkit::class.java.getDeclaredField("toolkit")
+            toolkitField.isAccessible = true
+            toolkitField[null] = null
         }
     }
 }
