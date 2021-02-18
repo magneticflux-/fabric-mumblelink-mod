@@ -33,6 +33,12 @@
         "value": "com.skaggsm.mumblelinkmod.ClientMumbleLinkMod"
       }
     ],
+    "preLaunch": [
+      {
+        "adapter": "kotlin",
+        "value": "com.skaggsm.mumblelinkmod.MumbleLinkPreLaunchEntrypoint"
+      }
+    ],
     "modmenu": [
       "com.skaggsm.mumblelinkmod.screen.MumbleLinkModMenu"
     ]
