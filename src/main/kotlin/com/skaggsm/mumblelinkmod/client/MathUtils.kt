@@ -1,4 +1,4 @@
-package com.skaggsm.mumblelinkmod
+package com.skaggsm.mumblelinkmod.client
 
 import net.minecraft.util.math.Vec3d
 

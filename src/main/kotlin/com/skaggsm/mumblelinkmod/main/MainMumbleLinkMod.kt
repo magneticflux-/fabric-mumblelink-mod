@@ -13,7 +13,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
@@ -29,6 +29,7 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.Temporal
+import java.util.Locale
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.exists
@@ -53,6 +54,7 @@ object MainMumbleLinkMod : ModInitializer {
     // Configs
     @Deprecated("Use the new scoped configs!")
     lateinit var oldConfigHolder: ConfigHolder<OldConfig>
+    @Deprecated("Use the new scoped configs!")
     var oldConfig: OldConfig? = null
     lateinit var config: MainConfig
     lateinit var configTree: ConfigBranch
@@ -63,6 +65,7 @@ object MainMumbleLinkMod : ModInitializer {
         setupEvents()
     }
 
+    @Suppress("DEPRECATION")
     private fun setupConfig() {
         config = MainConfig()
 
@@ -97,7 +100,7 @@ object MainMumbleLinkMod : ModInitializer {
         )
     }
 
-    fun deserialize() {
+    private fun deserialize() {
         FiberSerialization.deserialize(
             configTree,
             Files.newInputStream(configFile, StandardOpenOption.READ),
@@ -105,6 +108,7 @@ object MainMumbleLinkMod : ModInitializer {
         )
     }
 
+    @Suppress("DEPRECATION")
     private fun handleOldConfig() {
         // Load old config
         if (oldConfigFile.exists()) {
@@ -114,8 +118,8 @@ object MainMumbleLinkMod : ModInitializer {
         }
 
         // Expire backup
-        if (oldConfigFileBackup.exists() && Instant.now() - oldConfigFileBackup.getLastModifiedTime()
-            .toInstant() >= Duration.ofDays(14)
+        if (oldConfigFileBackup.exists() &&
+            Instant.now() - oldConfigFileBackup.getLastModifiedTime().toInstant() >= Duration.ofDays(14)
         ) {
             oldConfigFileBackup.deleteIfExists()
         }
@@ -149,8 +153,20 @@ object MainMumbleLinkMod : ModInitializer {
         LOG.trace("Updating VoIP location for ${player.name.string}!")
 
         val dim = toWorld.value
-        val dimNamespace = dim.namespace.split('_').joinToString(" ") { it.capitalize() }
-        val dimPath = dim.path.split('_').joinToString(" ") { it.capitalize() }
+        val dimNamespace = dim.namespace.split('_').joinToString(" ") {
+            it.replaceFirstChar { c ->
+                if (c.isLowerCase()) c.titlecase(
+                    Locale.getDefault()
+                ) else c.toString()
+            }
+        }
+        val dimPath = dim.path.split('_').joinToString(" ") {
+            it.replaceFirstChar { c ->
+                if (c.isLowerCase()) c.titlecase(
+                    Locale.getDefault()
+                ) else c.toString()
+            }
+        }
         val dimId = "$dimNamespace $dimPath"
 
         val teamName = player.scoreboardTeam?.name ?: ""
@@ -173,7 +189,7 @@ object MainMumbleLinkMod : ModInitializer {
         buf.writeString(query)
         buf.writeString(fragment)
 
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SendMumbleURL.ID, buf)
+        ServerPlayNetworking.send(player, SendMumbleURL.ID, buf)
     }
 }
 

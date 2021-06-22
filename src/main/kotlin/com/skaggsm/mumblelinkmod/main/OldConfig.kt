@@ -3,6 +3,9 @@ package com.skaggsm.mumblelinkmod.main
 import com.skaggsm.mumblelinkmod.client.ClientConfig
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.MODID
 import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.ACCEPT
+import com.skaggsm.mumblelinkmod.main.OldConfig.AutoLaunchOption.IGNORE
+import com.skaggsm.mumblelinkmod.main.OldConfig.VoipClient.MUMBLE
+import com.skaggsm.mumblelinkmod.main.OldConfig.VoipClient.TEAMSPEAK
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry
@@ -19,7 +22,7 @@ class OldConfig : ConfigData {
     var mumbleDimensionYAxisAdjust: Float = 0f
 
     @ConfigEntry.Category("server")
-    var voipClient: VoipClient = VoipClient.MUMBLE
+    var voipClient: VoipClient = MUMBLE
 
     @ConfigEntry.Category("server")
     var mumbleServerHost: String? = null
@@ -46,14 +49,14 @@ class OldConfig : ConfigData {
 
 fun OldConfig.VoipClient.updated(): MainConfig.VoipClient {
     return when (this) {
-        OldConfig.VoipClient.MUMBLE -> MainConfig.VoipClient.MUMBLE
-        OldConfig.VoipClient.TEAMSPEAK -> MainConfig.VoipClient.TEAMSPEAK
+        MUMBLE -> MainConfig.VoipClient.MUMBLE
+        TEAMSPEAK -> MainConfig.VoipClient.TEAMSPEAK
     }
 }
 
 fun OldConfig.AutoLaunchOption.updated(): ClientConfig.AutoLaunchOption {
     return when (this) {
-        OldConfig.AutoLaunchOption.IGNORE -> ClientConfig.AutoLaunchOption.IGNORE
-        OldConfig.AutoLaunchOption.ACCEPT -> ClientConfig.AutoLaunchOption.ACCEPT
+        IGNORE -> ClientConfig.AutoLaunchOption.IGNORE
+        ACCEPT -> ClientConfig.AutoLaunchOption.ACCEPT
     }
 }

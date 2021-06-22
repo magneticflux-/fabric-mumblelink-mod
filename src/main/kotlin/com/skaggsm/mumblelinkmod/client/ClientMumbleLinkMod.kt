@@ -9,7 +9,6 @@ import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.LOG
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.SERIALIZER
 import com.skaggsm.mumblelinkmod.main.SendMumbleURL
 import com.skaggsm.mumblelinkmod.main.updated
-import com.skaggsm.mumblelinkmod.toLHArray
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
@@ -20,9 +19,11 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType.CLIENT
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
-import net.fabricmc.fabric.api.network.PacketContext
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.network.ClientPlayNetworkHandler
 import net.minecraft.network.PacketByteBuf
 import org.lwjgl.system.Platform
 import java.awt.Desktop
@@ -50,14 +51,21 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
     private var mumble: MumbleLink? = null
 
-    private fun packetConsumer(context: PacketContext, bytes: PacketByteBuf) {
-        val voipClient = bytes.readEnumConstant(MainConfig.VoipClient::class.java)
-        val userinfo = bytes.readString().ifEmpty { null }
-        val host = bytes.readString().ifEmpty { null }
-        val port = bytes.readInt()
-        val path = bytes.readString().ifEmpty { null }
-        val query = bytes.readString().ifEmpty { null }
-        val fragment = bytes.readString().ifEmpty { null }
+    private fun channelHandler(
+        minecraftClient: MinecraftClient,
+        clientPlayNetworkHandler: ClientPlayNetworkHandler,
+        packetByteBuf: PacketByteBuf,
+        packetSender: PacketSender
+    ) {
+        if (config.clientAutoLaunchOption == AutoLaunchOption.IGNORE) return
+
+        val voipClient = packetByteBuf.readEnumConstant(MainConfig.VoipClient::class.java)
+        val userinfo = packetByteBuf.readString().ifEmpty { null }
+        val host = packetByteBuf.readString().ifEmpty { null }
+        val port = packetByteBuf.readInt()
+        val path = packetByteBuf.readString().ifEmpty { null }
+        val query = packetByteBuf.readString().ifEmpty { null }
+        val fragment = packetByteBuf.readString().ifEmpty { null }
 
         try {
             val uri = URI(voipClient.scheme, userinfo, host, port, path, query, fragment)
@@ -78,6 +86,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
         setupEvents()
     }
 
+    @Suppress("DEPRECATION")
     private fun setupConfig() {
         config = ClientConfig()
 
@@ -107,7 +116,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
         )
     }
 
-    fun deserialize() {
+    private fun deserialize() {
         FiberSerialization.deserialize(
             configTree,
             Files.newInputStream(configFile, READ),
@@ -123,14 +132,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
     }
 
     private fun setupEvents() {
-        when (config.clientAutoLaunchOption) {
-            AutoLaunchOption.ACCEPT -> ClientSidePacketRegistry.INSTANCE.register(
-                SendMumbleURL.ID,
-                ClientMumbleLinkMod::packetConsumer
-            )
-            else -> {
-            }
-        }
+        ClientPlayNetworking.registerGlobalReceiver(SendMumbleURL.ID, ClientMumbleLinkMod::channelHandler)
 
         ClientTickEvents.START_CLIENT_TICK.register(
             ClientTickEvents.StartTick {

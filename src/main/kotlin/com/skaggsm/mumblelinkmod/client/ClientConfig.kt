@@ -8,7 +8,6 @@ import net.fabricmc.api.Environment
 @Environment(EnvType.CLIENT)
 class ClientConfig {
     @ClothSetting.EnumHandler(DROPDOWN)
-    @ClothSetting.RequiresRestart
     var clientAutoLaunchOption: AutoLaunchOption = AutoLaunchOption.ACCEPT
 
     var clientDimensionYAxisAdjust: Float = 0f
