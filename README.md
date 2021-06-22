@@ -47,7 +47,7 @@ Trivial configuring of the server may be done by specifying the host and port. C
 Dimension separation may also be accomplished by _users_ setting the "Y-Axis multiplier for dimension IDs" to a value above 512. This makes users in the Nether and End appear 512 blocks below and above users in the Overworld, respectively. This approach is not recommended for larger servers, but it may work fine for servers with < 5 people.
 
 ### Non-trivial
-Most of the non-trivial configuration is done through the use of templated strings. The path and the query string of the URI sent to clients to be opened are template strings, so parts of them may be replaced by user- and server-specific information. Below is a table of available template values:
+Before going any further, make sure you understand RFC 3986! Most of the non-trivial configuration is done through the use of templated strings. The `userinfo`, `path`, `query`, and `fragment` strings of the URI sent to clients to be opened are template strings, so parts of them may be replaced by user- and server-specific information. Below is a table of available template values:
 
 | Template index | Value source         | Example values |
 | -------------- | -------------------- | -------------- |
@@ -77,11 +77,11 @@ In TeamSpeak, the channel path should go in a query parameter called `channel`.
 
 # Security considerations
 
-Servers with this mod will be able to open Mumble or TeamSpeak URIs through your client. Servers _cannot_ open arbitrary URLs, because only the required information ([host](https://tools.ietf.org/html/rfc3986#section-3.2.2), [port](https://tools.ietf.org/html/rfc3986#section-3.2.3), [path](https://tools.ietf.org/html/rfc3986#section-3.3), and [query](https://tools.ietf.org/html/rfc3986#section-3.4)) is sent to the client. It is important to note that a full URL is _not_ sent to the client; the [scheme](https://tools.ietf.org/html/rfc3986#section-3.1), [user info](https://tools.ietf.org/html/rfc3986#section-3.2.1), and [fragment identifier](https://tools.ietf.org/html/rfc3986#section-3.5) are hard-coded. Only vulnerabilities in Mumble or TeamSpeak may be exploited, and only by servers trusted by the player.
+Servers with this mod will be able to open Mumble or TeamSpeak URIs through your client. Servers _cannot_ open arbitrary URLs, because only the required information ([userinfo](https://tools.ietf.org/html/rfc3986#section-3.2.1), [host](https://tools.ietf.org/html/rfc3986#section-3.2.2), [port](https://tools.ietf.org/html/rfc3986#section-3.2.3), [path](https://tools.ietf.org/html/rfc3986#section-3.3), [query](https://tools.ietf.org/html/rfc3986#section-3.4), and [fragment](https://tools.ietf.org/html/rfc3986#section-3.5)) is sent to the client. It is important to note that a full URL is _not_ sent to the client; the [scheme](https://tools.ietf.org/html/rfc3986#section-3.1) is hard-coded. Only vulnerabilities in Mumble or TeamSpeak may be exploited, and only by servers trusted by the player.
 
-The client-side URI construction is this fragment:
+The client-side URI construction is this snippet from `ClientMumbleLinkMod.kt`:
 ```kotlin
-val uri = URI(voipClient.scheme, null, host, port, path, query, null)
+val uri = URI(voipClient.scheme, userinfo, host, port, path, query, fragment)
 ```
 
 ---

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${archives_base_name}",
+  "id": "fabric-mumblelink-mod",
   "version": "${version}",
   "name": "MumbleLink",
   "description": "Positional audio support for Mumble",
@@ -18,33 +18,33 @@
     "sources": "https://github.com/magneticflux-/fabric-mumblelink-mod"
   },
   "license": "LGPL-3.0-or-later",
-  "icon": "assets/${archives_base_name}/icon.png",
+  "icon": "assets/fabric-mumblelink-mod/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       {
         "adapter": "kotlin",
-        "value": "com.skaggsm.mumblelinkmod.MumbleLinkMod"
+        "value": "com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "com.skaggsm.mumblelinkmod.ClientMumbleLinkMod"
+        "value": "com.skaggsm.mumblelinkmod.client.ClientMumbleLinkMod"
       }
     ],
     "modmenu": [
-      "com.skaggsm.mumblelinkmod.screen.MumbleLinkModMenu"
+      "com.skaggsm.mumblelinkmod.client.MumbleLinkModMenu"
     ]
   },
   "mixins": [
-    "${archives_base_name}.mixins.json"
+    "fabric-mumblelink-mod.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.8.8",
     "fabric": "*",
     "fabric-language-kotlin": ">=1.3.30",
-    "minecraft": ">=1.16-rc.9"
+    "minecraft": ">=1.16"
   },
   "custom": {
     "modmenu:clientsideOnly": false

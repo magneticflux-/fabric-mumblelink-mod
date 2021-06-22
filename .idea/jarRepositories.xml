@@ -51,5 +51,30 @@
       <option name="name" value="maven2" />
       <option name="url" value="https://dl.bintray.com/shedaniel/autoconfig1u/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="MavenLocal" />
+      <option name="name" value="MavenLocal" />
+      <option name="url" value="file:/$MAVEN_REPOSITORY$/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Personal" />
+      <option name="name" value="Personal" />
+      <option name="url" value="https://maven.skaggsm.com/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="shedaniel" />
+      <option name="name" value="shedaniel" />
+      <option name="url" value="https://maven.shedaniel.me/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="TerraformersMC" />
+      <option name="name" value="TerraformersMC" />
+      <option name="url" value="https://maven.terraformersmc.com/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="UserLocalRemappedMods" />
+      <option name="name" value="UserLocalRemappedMods" />
+      <option name="url" value="file:/$PROJECT_DIR$/.gradle/loom-cache/remapped_mods/" />
+    </remote-repository>
   </component>
 </project>
