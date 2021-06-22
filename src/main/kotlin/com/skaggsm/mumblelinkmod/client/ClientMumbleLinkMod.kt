@@ -159,7 +159,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     mumble.avatarFront = camDir
                     mumble.avatarTop = camTop
 
-                    mumble.name = "Minecraft Mumble Link Mod"
+                    mumble.name = "Minecraft"
 
                     mumble.cameraPosition = camPos
                     mumble.cameraFront = camDir
@@ -167,7 +167,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
                     mumble.identity = Json.encodeToString(Identity(world, player))
 
-                    mumble.context = "Minecraft"
+                    mumble.context = ""
 
                     mumble.description = "A Minecraft mod that provides position data to VoIP clients."
                 } else {
