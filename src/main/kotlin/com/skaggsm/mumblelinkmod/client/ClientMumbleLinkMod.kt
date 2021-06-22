@@ -14,6 +14,8 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree
 import io.github.fablabsmc.fablabs.impl.fiber.tree.ConfigBranchImpl
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import me.shedaniel.fiber2cloth.api.Fiber2Cloth
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType.CLIENT
@@ -163,7 +165,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     mumble.cameraFront = camDir
                     mumble.cameraTop = camTop
 
-                    mumble.identity = player.uuidAsString
+                    mumble.identity = Json.encodeToString(Identity(world, player))
 
                     mumble.context = "Minecraft"
 
@@ -213,7 +215,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
         if (FabricLoader.getInstance().isModLoaded("optifabric") && Platform.get() == Platform.MACOSX) {
             LOG.error("OptiFine needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
         } else {
-            // If Optifine isn't loaded, we can just set it here and skip the hassle later.
+            // If OptiFine isn't loaded, we can just set it here and skip the hassle later.
             // Required to open URIs
             System.setProperty("java.awt.headless", "false")
         }

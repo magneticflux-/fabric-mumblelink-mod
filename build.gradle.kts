@@ -16,6 +16,7 @@ plugins {
     id("com.matthewprenger.cursegradle") version "1.4.0"
     id("com.diffplug.spotless") version "5.14.0"
     kotlin("jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
     id("org.shipkit.shipkit-auto-version") version "1.+"
     id("org.shipkit.shipkit-changelog") version "1.+"
     id("org.shipkit.shipkit-github-release") version "1.+"
