@@ -29,12 +29,15 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.Temporal
-import kotlin.io.path.*
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.div
+import kotlin.io.path.exists
+import kotlin.io.path.getLastModifiedTime
+import kotlin.io.path.moveTo
 
 /**
  * Created by Mitchell Skaggs on 5/29/2019.
  */
-@OptIn(ExperimentalPathApi::class)
 object MainMumbleLinkMod : ModInitializer {
     // Common constants
     const val MODID: String = "fabric-mumblelink-mod"
@@ -112,24 +115,30 @@ object MainMumbleLinkMod : ModInitializer {
 
         // Expire backup
         if (oldConfigFileBackup.exists() && Instant.now() - oldConfigFileBackup.getLastModifiedTime()
-                .toInstant() >= Duration.ofDays(14)
+            .toInstant() >= Duration.ofDays(14)
         ) {
             oldConfigFileBackup.deleteIfExists()
         }
     }
 
     private fun setupEvents() {
-        ServerOnConnectCallback.EVENT.register(ServerOnConnectCallback { player ->
-            sendVoipPacket(player)
-        })
+        ServerOnConnectCallback.EVENT.register(
+            ServerOnConnectCallback { player ->
+                sendVoipPacket(player)
+            }
+        )
 
-        ServerOnChangeWorldCallback.EVENT.register(ServerOnChangeWorldCallback { toWorld, player ->
-            sendVoipPacket(player, toWorld)
-        })
+        ServerOnChangeWorldCallback.EVENT.register(
+            ServerOnChangeWorldCallback { toWorld, player ->
+                sendVoipPacket(player, toWorld)
+            }
+        )
 
-        ServerOnTeamsModify.EVENT.register(ServerOnTeamsModify { _, server ->
-            sendAllVoipPackets(server)
-        })
+        ServerOnTeamsModify.EVENT.register(
+            ServerOnTeamsModify { _, server ->
+                sendAllVoipPackets(server)
+            }
+        )
     }
 
     private fun sendAllVoipPackets(server: MinecraftServer) {

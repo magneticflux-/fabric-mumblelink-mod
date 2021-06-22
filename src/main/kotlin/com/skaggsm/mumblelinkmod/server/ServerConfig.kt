@@ -1,4 +1,3 @@
 package com.skaggsm.mumblelinkmod.server
 
-class ServerConfig {
-}
+class ServerConfig

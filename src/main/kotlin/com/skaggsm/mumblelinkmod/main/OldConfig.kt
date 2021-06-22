@@ -34,7 +34,7 @@ class OldConfig : ConfigData {
     var mumbleServerQuery: String? = null
 
     enum class AutoLaunchOption {
-        IGNORE, //PROMPT,
+        IGNORE, // PROMPT,
         ACCEPT
     }
 

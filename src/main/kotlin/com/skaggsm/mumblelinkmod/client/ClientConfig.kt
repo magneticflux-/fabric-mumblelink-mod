@@ -14,7 +14,7 @@ class ClientConfig {
     var clientDimensionYAxisAdjust: Float = 0f
 
     enum class AutoLaunchOption {
-        IGNORE, //PROMPT,
+        IGNORE, // PROMPT,
         ACCEPT
     }
 }

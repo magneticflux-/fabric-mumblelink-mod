@@ -24,8 +24,8 @@ plugins {
 tasks.withType<DependencyUpdatesTask> {
     gradleReleaseChannel = "current"
     rejectVersionIf {
-        candidate.version.contains("""-M\d+""".toRegex())
-                || candidate.version.contains("RC")
+        candidate.version.contains("""-M\d+""".toRegex()) ||
+            candidate.version.contains("RC")
     }
 }
 
@@ -71,34 +71,34 @@ minecraft {
 }
 
 dependencies {
-    //to change the versions see the gradle.properties file
-    minecraft("com.mojang:minecraft:${minecraft_version}")
-    mappings("net.fabricmc:yarn:${yarn_mappings}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
+    // to change the versions see the gradle.properties file
+    minecraft("com.mojang:minecraft:$minecraft_version")
+    mappings("net.fabricmc:yarn:$yarn_mappings:v2")
+    modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_version")
 
-    modImplementation("net.fabricmc:fabric-language-kotlin:${kotlin_version}")
-    include("net.fabricmc:fabric-language-kotlin:${kotlin_version}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:$kotlin_version")
+    include("net.fabricmc:fabric-language-kotlin:$kotlin_version")
 
-    modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
+    modImplementation("com.terraformersmc:modmenu:$modmenu_version")
 
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}")
-    include("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}")
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
+    include("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
 
     modImplementation("me.sargunvohra.mcmods:autoconfig1u:3.3.1")
     include("me.sargunvohra.mcmods:autoconfig1u:3.3.1")
 
-    modImplementation("me.shedaniel.cloth:fiber2cloth:${fiber_2_cloth_version}") {
+    modImplementation("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version") {
         isTransitive = false
     }
-    include("me.shedaniel.cloth:fiber2cloth:${fiber_2_cloth_version}") {
+    include("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version") {
         isTransitive = false
     }
 
-    modImplementation("me.zeroeightsix:fiber:${fiber_version}")
-    include("me.zeroeightsix:fiber:${fiber_version}")
+    modImplementation("me.zeroeightsix:fiber:$fiber_version")
+    include("me.zeroeightsix:fiber:$fiber_version")
 
     include("com.skaggsm:java-mumble-link:0.2.6")
     implementation("com.skaggsm:java-mumble-link:0.2.6")
@@ -189,27 +189,36 @@ curseforge {
         else -> println("No CurseForge API key found, \'curseforge\' tasks will not work")
     }
 
-    project(closureOf<CurseProject> {
-        id = curseforge_id
-        releaseType = "release"
-        addGameVersion(minecraft_version)
-        addGameVersion("Fabric")
-        changelog =
-            "View the latest changelog here: https://github.com/magneticflux-/fabric-mumblelink-mod/releases"
-        mainArtifact(tasks.remapJar.get(), closureOf<CurseArtifact> {
-            relations(closureOf<CurseRelation> {
-                requiredDependency("fabric-api")
-                embeddedLibrary("fabric-language-kotlin")
-                embeddedLibrary("cloth-config")
-                embeddedLibrary("fiber2cloth")
-                optionalDependency("modmenu")
-            })
-        })
-        addArtifact(tasks["sourcesJar"])
-    })
-    options(closureOf<Options> {
-        forgeGradleIntegration = false
-    })
+    project(
+        closureOf<CurseProject> {
+            id = curseforge_id
+            releaseType = "release"
+            addGameVersion(minecraft_version)
+            addGameVersion("Fabric")
+            changelog =
+                "View the latest changelog here: https://github.com/magneticflux-/fabric-mumblelink-mod/releases"
+            mainArtifact(
+                tasks.remapJar.get(),
+                closureOf<CurseArtifact> {
+                    relations(
+                        closureOf<CurseRelation> {
+                            requiredDependency("fabric-api")
+                            embeddedLibrary("fabric-language-kotlin")
+                            embeddedLibrary("cloth-config")
+                            embeddedLibrary("fiber2cloth")
+                            optionalDependency("modmenu")
+                        }
+                    )
+                }
+            )
+            addArtifact(tasks["sourcesJar"])
+        }
+    )
+    options(
+        closureOf<Options> {
+            forgeGradleIntegration = false
+        }
+    )
 }
 
 spotless {
@@ -224,7 +233,7 @@ spotless {
 afterEvaluate {
     // CurseGradle generates tasks in afterEvaluate for each project
     // There isn't really any other way to make it depend on a task unless it is an AbstractArchiveTask
-    val curseforgeTask = tasks.getByName("curseforge${curseforge_id}")
+    val curseforgeTask = tasks.getByName("curseforge$curseforge_id")
     tasks.publish {
         dependsOn(curseforgeTask)
     }

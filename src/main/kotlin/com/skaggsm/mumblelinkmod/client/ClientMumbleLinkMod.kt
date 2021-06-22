@@ -30,14 +30,14 @@ import java.awt.GraphicsEnvironment
 import java.net.URI
 import java.net.URISyntaxException
 import java.nio.file.Files
-import java.nio.file.StandardOpenOption.*
-import kotlin.io.path.ExperimentalPathApi
+import java.nio.file.StandardOpenOption.CREATE
+import java.nio.file.StandardOpenOption.READ
+import java.nio.file.StandardOpenOption.WRITE
 import kotlin.io.path.div
 
 /**
  * Created by Mitchell Skaggs on 5/12/2019.
  */
-@OptIn(ExperimentalPathApi::class)
 @Environment(CLIENT)
 object ClientMumbleLinkMod : ClientModInitializer {
     // Config files
@@ -99,7 +99,6 @@ object ClientMumbleLinkMod : ClientModInitializer {
         deserialize()
     }
 
-
     fun serialize() {
         FiberSerialization.serialize(
             configTree,
@@ -133,43 +132,45 @@ object ClientMumbleLinkMod : ClientModInitializer {
             }
         }
 
-        ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick {
-            val world = it.world
-            val player = it.player
+        ClientTickEvents.START_CLIENT_TICK.register(
+            ClientTickEvents.StartTick {
+                val world = it.world
+                val player = it.player
 
-            if (world != null && player != null) {
-                val mumble = ensureLinked()
+                if (world != null && player != null) {
+                    val mumble = ensureLinked()
 
-                val camPos = player.getCameraPosVec(1F).toLHArray
-                val camDir = player.rotationVecClient.toLHArray
-                val camTop = floatArrayOf(0f, 1f, 0f)
+                    val camPos = player.getCameraPosVec(1F).toLHArray
+                    val camDir = player.rotationVecClient.toLHArray
+                    val camTop = floatArrayOf(0f, 1f, 0f)
 
-                // Make people in other dimensions far away so that they're muted.
-                val yAxisAdjuster = world.dimension.hashCode() * config.clientDimensionYAxisAdjust
-                camPos[1] += yAxisAdjuster
+                    // Make people in other dimensions far away so that they're muted.
+                    val yAxisAdjuster = world.dimension.hashCode() * config.clientDimensionYAxisAdjust
+                    camPos[1] += yAxisAdjuster
 
-                mumble.uiVersion = 2
-                mumble.uiTick++
+                    mumble.uiVersion = 2
+                    mumble.uiTick++
 
-                mumble.avatarPosition = camPos
-                mumble.avatarFront = camDir
-                mumble.avatarTop = camTop
+                    mumble.avatarPosition = camPos
+                    mumble.avatarFront = camDir
+                    mumble.avatarTop = camTop
 
-                mumble.name = "Minecraft Mumble Link Mod"
+                    mumble.name = "Minecraft Mumble Link Mod"
 
-                mumble.cameraPosition = camPos
-                mumble.cameraFront = camDir
-                mumble.cameraTop = camTop
+                    mumble.cameraPosition = camPos
+                    mumble.cameraFront = camDir
+                    mumble.cameraTop = camTop
 
-                mumble.identity = player.uuidAsString
+                    mumble.identity = player.uuidAsString
 
-                mumble.context = "Minecraft"
+                    mumble.context = "Minecraft"
 
-                mumble.description = "A Minecraft mod that provides position data to VoIP clients."
-            } else {
-                ensureClosed()
+                    mumble.description = "A Minecraft mod that provides position data to VoIP clients."
+                } else {
+                    ensureClosed()
+                }
             }
-        })
+        )
     }
 
     private fun ensureLinked(): MumbleLink {
