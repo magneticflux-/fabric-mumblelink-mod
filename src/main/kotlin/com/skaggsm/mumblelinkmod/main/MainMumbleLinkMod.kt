@@ -3,7 +3,7 @@ package com.skaggsm.mumblelinkmod.main
 import com.skaggsm.mumblelinkmod.ServerOnChangeWorldCallback
 import com.skaggsm.mumblelinkmod.ServerOnConnectCallback
 import com.skaggsm.mumblelinkmod.ServerOnTeamsModify
-import com.skaggsm.mumblelinkmod.client.ClientMumbleLinkMod.createSettings
+import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerializer
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
@@ -12,6 +12,8 @@ import io.netty.buffer.Unpooled
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
 import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
+import me.shedaniel.fiber2cloth.api.Fiber2Cloth
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
@@ -54,6 +56,7 @@ object MainMumbleLinkMod : ModInitializer {
     // Configs
     @Deprecated("Use the new scoped configs!")
     lateinit var oldConfigHolder: ConfigHolder<OldConfig>
+
     @Deprecated("Use the new scoped configs!")
     var oldConfig: OldConfig? = null
     lateinit var config: MainConfig
@@ -90,6 +93,13 @@ object MainMumbleLinkMod : ModInitializer {
 
         // Verify save worked
         deserialize()
+    }
+
+    fun createSettings(): AnnotatedSettings {
+        val settingsBuilder = AnnotatedSettings.builder()
+        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
+            Fiber2Cloth.configure(settingsBuilder)
+        return settingsBuilder.build()
     }
 
     fun serialize() {

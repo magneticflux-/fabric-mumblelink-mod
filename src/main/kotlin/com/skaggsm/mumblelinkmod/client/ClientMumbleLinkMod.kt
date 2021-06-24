@@ -7,16 +7,15 @@ import com.skaggsm.mumblelinkmod.main.MainConfig
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.LOG
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.SERIALIZER
+import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.createSettings
 import com.skaggsm.mumblelinkmod.main.SendMumbleURL
 import com.skaggsm.mumblelinkmod.main.updated
-import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree
 import io.github.fablabsmc.fablabs.impl.fiber.tree.ConfigBranchImpl
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.shedaniel.fiber2cloth.api.Fiber2Cloth
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType.CLIENT
 import net.fabricmc.api.Environment
@@ -124,13 +123,6 @@ object ClientMumbleLinkMod : ClientModInitializer {
             Files.newInputStream(configFile, READ),
             SERIALIZER
         )
-    }
-
-    fun createSettings(): AnnotatedSettings {
-        val settingsBuilder = AnnotatedSettings.builder()
-        if (FabricLoader.getInstance().environmentType == CLIENT)
-            Fiber2Cloth.configure(settingsBuilder)
-        return settingsBuilder.build()
     }
 
     private fun setupEvents() {
