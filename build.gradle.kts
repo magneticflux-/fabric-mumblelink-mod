@@ -11,12 +11,12 @@ plugins {
     java
     idea
     `maven-publish`
-    id("fabric-loom") version "0.8-SNAPSHOT"
+    id("fabric-loom") version "0.9-SNAPSHOT"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("com.matthewprenger.cursegradle") version "1.4.0"
     id("com.diffplug.spotless") version "5.14.0"
-    kotlin("jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    kotlin("jvm") version "1.5.21"
+    kotlin("plugin.serialization") version "1.5.21"
     id("org.shipkit.shipkit-auto-version") version "1.+"
     id("org.shipkit.shipkit-changelog") version "1.+"
     id("org.shipkit.shipkit-github-release") version "1.+"
@@ -68,7 +68,7 @@ base {
     group = maven_group
 }
 
-minecraft {
+loom {
 }
 
 dependencies {
@@ -103,8 +103,8 @@ dependencies {
 
     include("com.skaggsm:java-mumble-link:0.2.6")
     implementation("com.skaggsm:java-mumble-link:0.2.6")
-    include("com.skaggsm:jvm-shared-memory:0.2.7")
-    implementation("com.skaggsm:jvm-shared-memory:0.2.7")
+    include("com.skaggsm:jvm-shared-memory:0.2.9")
+    implementation("com.skaggsm:jvm-shared-memory:0.2.9")
 }
 
 tasks.processResources {
@@ -224,10 +224,10 @@ curseforge {
 
 spotless {
     kotlin {
-        ktlint("0.41.0")
+        ktlint("0.42.0")
     }
     kotlinGradle {
-        ktlint("0.41.0")
+        ktlint("0.42.0")
     }
 }
 
