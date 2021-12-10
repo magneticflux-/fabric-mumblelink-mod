@@ -22,7 +22,6 @@ import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketSender
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayNetworkHandler
 import net.minecraft.network.PacketByteBuf
@@ -194,7 +193,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
 
     private fun ensureNotHeadless() {
         if (GraphicsEnvironment.isHeadless()) {
-            LOG.error("Unable to unset headless earlier (are you using OptiFine?), doing it with nasty reflection now!")
+            LOG.warn("Unable to unset headless earlier (are you using macOS?), doing it with nasty reflection now!")
             val headlessField = GraphicsEnvironment::class.java.getDeclaredField("headless")
             headlessField.isAccessible = true
             headlessField[null] = false
@@ -202,12 +201,12 @@ object ClientMumbleLinkMod : ClientModInitializer {
     }
 
     init {
-        // OptiFine needs java.awt.headless=true on Mac because it accidentally uses an AWT class that triggers JNI stuff on classload if not headless.
-        // That JNI stuff fails on Mac because of course it does, so we skip settings java.awt.headless=false now and set it on-demand later (hopefully after OptiFine already triggered the AWT "booby-trap").
-        if (FabricLoader.getInstance().isModLoaded("optifabric") && Platform.get() == Platform.MACOSX) {
-            LOG.error("OptiFine needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
+        // Many mods assume java.awt.headless=true on macOS because they accidentally use AWT classes that triggers JNI stuff on classload if not headless.
+        // That JNI stuff fails on Mac because of course it does, so we skip settings java.awt.headless=false now and set it on-demand later (hopefully after the mods have already triggered the AWT JNI code).
+        if (Platform.get() == Platform.MACOSX) {
+            LOG.warn("macOS needs java.awt.headless=true right now, so we'll set it later with a reflection hack!")
         } else {
-            // If OptiFine isn't loaded, we can just set it here and skip the hassle later.
+            // If not on macOS isn't loaded, we can just set it here and skip the hassle later.
             // Required to open URIs
             System.setProperty("java.awt.headless", "false")
         }
