@@ -140,7 +140,7 @@ object ClientMumbleLinkMod : ClientModInitializer {
                     val camTop = floatArrayOf(0f, 1f, 0f)
 
                     // Make people in other dimensions far away so that they're muted.
-                    val yAxisAdjuster = world.dimension.hashCode() * config.clientDimensionYAxisAdjust
+                    val yAxisAdjuster = (world.registryKey.value.stableHash % 2048) * config.clientDimensionYAxisAdjust
                     camPos[1] += yAxisAdjuster
 
                     mumble.uiVersion = 2

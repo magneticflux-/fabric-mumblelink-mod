@@ -10,7 +10,7 @@ class ClientConfig {
     @ClothSetting.EnumHandler(DROPDOWN)
     var clientAutoLaunchOption: AutoLaunchOption = AutoLaunchOption.ACCEPT
 
-    var clientDimensionYAxisAdjust: Float = 0f
+    var clientDimensionYAxisAdjust: Float = 512f
 
     enum class AutoLaunchOption {
         IGNORE, // PROMPT,
