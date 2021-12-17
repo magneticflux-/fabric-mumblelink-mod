@@ -11,12 +11,12 @@ plugins {
     java
     idea
     `maven-publish`
-    id("fabric-loom") version "0.9-SNAPSHOT"
+    id("fabric-loom") version "0.10-SNAPSHOT"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "5.14.0"
-    kotlin("jvm") version "1.5.21"
-    kotlin("plugin.serialization") version "1.5.21"
+    id("com.diffplug.spotless") version "6.0.5"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
     id("org.shipkit.shipkit-auto-version") version "1.+"
     id("org.shipkit.shipkit-changelog") version "1.+"
     id("org.shipkit.shipkit-github-release") version "1.+"
@@ -126,18 +126,18 @@ tasks.withType<JavaCompile> {
     // If Javadoc is generated, this must be specified in that task too.
     options.encoding = "UTF-8"
     // Minecraft 1.17 (21w19a) upwards uses Java 16.
-    options.release.set(16)
+    options.release.set(17)
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "16"
+        jvmTarget = "17"
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
@@ -224,10 +224,10 @@ curseforge {
 
 spotless {
     kotlin {
-        ktlint("0.42.0")
+        ktlint("0.43.2")
     }
     kotlinGradle {
-        ktlint("0.42.0")
+        ktlint("0.43.2")
     }
 }
 

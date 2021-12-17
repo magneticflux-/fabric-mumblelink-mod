@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
+          java-version: '17'
       - uses: burrunan/gradle-cache-action@v1
         with:
           gradle-distribution-sha-256-sum-warning: false
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
+          java-version: '17'
       - uses: burrunan/gradle-cache-action@v1
         with:
           gradle-distribution-sha-256-sum-warning: false
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
+          java-version: '17'
       - uses: burrunan/gradle-cache-action@v1
         with:
           gradle-distribution-sha-256-sum-warning: false
@@ -62,7 +62,7 @@ jobs:
     needs: [ spotless, test ]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-      && github.ref == 'refs/heads/release/mc-1.17.x'
+      && github.ref == 'refs/heads/release/mc-1.18.x'
       && github.repository == 'magneticflux-/fabric-mumblelink-mod'
       && !(contains(toJSON(github.event.commits.*.message), '[skip release]') || contains(toJSON(github.event.commits.*.message), '[skip ci]'))
 
@@ -74,7 +74,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
+          java-version: '17'
 
       - uses: burrunan/gradle-cache-action@v1
         with:
