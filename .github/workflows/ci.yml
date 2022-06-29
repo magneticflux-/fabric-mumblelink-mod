@@ -62,7 +62,7 @@ jobs:
     needs: [ spotless, test ]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-      && github.ref == 'refs/heads/release/mc-1.18.x'
+      && github.ref == 'refs/heads/release/mc-1.19.x'
       && github.repository == 'magneticflux-/fabric-mumblelink-mod'
       && !(contains(toJSON(github.event.commits.*.message), '[skip release]') || contains(toJSON(github.event.commits.*.message), '[skip ci]'))
 

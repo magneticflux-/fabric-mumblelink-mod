@@ -88,12 +88,8 @@ dependencies {
     modImplementation("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
     include("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
 
-    modImplementation("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version") {
-        isTransitive = false
-    }
-    include("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version") {
-        isTransitive = false
-    }
+    modImplementation("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version")
+    include("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version")
 
     modImplementation("me.zeroeightsix:fiber:$fiber_version")
     include("me.zeroeightsix:fiber:$fiber_version")
@@ -144,10 +140,7 @@ java {
 publishing {
     publications {
         create<MavenPublication>("mod") {
-            artifact(tasks.remapJar)
-            artifact(tasks["sourcesJar"]) {
-                builtBy(tasks.remapSourcesJar)
-            }
+            from(components["java"])
         }
     }
 

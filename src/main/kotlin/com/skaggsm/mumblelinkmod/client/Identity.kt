@@ -7,7 +7,7 @@ import net.minecraft.client.world.ClientWorld
 @Serializable
 data class Identity(val name: String, val worldSpawn: IntArray, val dimension: String) {
     constructor(world: ClientWorld, player: ClientPlayerEntity) : this(
-        player.displayName.asString(),
+        player.displayName.string,
         intArrayOf(
             world.spawnPos.x,
             world.spawnPos.y,
