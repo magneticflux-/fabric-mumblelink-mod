@@ -9,7 +9,6 @@ import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.LOG
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.SERIALIZER
 import com.skaggsm.mumblelinkmod.main.MainMumbleLinkMod.createSettings
 import com.skaggsm.mumblelinkmod.main.SendMumbleURL
-import com.skaggsm.mumblelinkmod.main.updated
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree
@@ -86,14 +85,8 @@ object ClientMumbleLinkMod : ClientModInitializer {
         setupEvents()
     }
 
-    @Suppress("DEPRECATION")
     private fun setupConfig() {
         config = ClientConfig()
-
-        MainMumbleLinkMod.oldConfig?.let {
-            config.clientAutoLaunchOption = it.mumbleAutoLaunchOption.updated()
-            config.clientDimensionYAxisAdjust = it.mumbleDimensionYAxisAdjust
-        }
 
         configTree = ConfigTree.builder().applyFromPojo(config, createSettings()).withName("client").build()
         unionConfigTree = ConfigBranchImpl("union", null)

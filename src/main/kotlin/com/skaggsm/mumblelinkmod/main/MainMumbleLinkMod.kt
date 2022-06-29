@@ -9,9 +9,6 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerial
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree
 import io.netty.buffer.Unpooled
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig
-import me.sargunvohra.mcmods.autoconfig1u.ConfigHolder
-import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer
 import me.shedaniel.fiber2cloth.api.Fiber2Cloth
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
@@ -50,20 +47,11 @@ object MainMumbleLinkMod : ModInitializer {
 
     // Config files
     private val configFile = configFolder / "fabric-mumblelink-mod-main.json"
-    private val oldConfigFile = configFolder / "fabric-mumblelink-mod.toml"
-    private val oldConfigFileBackup = configFolder / "fabric-mumblelink-mod.toml.old"
 
-    // Configs
-    @Deprecated("Use the new scoped configs!")
-    lateinit var oldConfigHolder: ConfigHolder<OldConfig>
-
-    @Deprecated("Use the new scoped configs!")
-    var oldConfig: OldConfig? = null
     lateinit var config: MainConfig
     lateinit var configTree: ConfigBranch
 
     override fun onInitialize() {
-        handleOldConfig()
         setupConfig()
         setupEvents()
     }
@@ -71,19 +59,6 @@ object MainMumbleLinkMod : ModInitializer {
     @Suppress("DEPRECATION")
     private fun setupConfig() {
         config = MainConfig()
-
-        oldConfig?.let {
-            config.voipClient = it.voipClient.updated()
-
-            // Special handling of old-style username/password combos
-            val hostParts = it.mumbleServerHost?.split('@', limit = 2)
-            config.voipServerHost = hostParts?.last() ?: ""
-            config.voipServerUserinfo = if (hostParts != null && hostParts.size > 1) hostParts.first() else ""
-
-            config.voipServerPort = it.mumbleServerPort ?: -1
-            config.voipServerPath = it.mumbleServerPath ?: ""
-            config.voipServerQuery = it.mumbleServerQuery ?: ""
-        }
 
         configTree = ConfigTree.builder().applyFromPojo(config, createSettings()).withName("main").build()
 
@@ -116,23 +91,6 @@ object MainMumbleLinkMod : ModInitializer {
             Files.newInputStream(configFile, StandardOpenOption.READ),
             SERIALIZER
         )
-    }
-
-    @Suppress("DEPRECATION")
-    private fun handleOldConfig() {
-        // Load old config
-        if (oldConfigFile.exists()) {
-            oldConfigHolder = AutoConfig.register(OldConfig::class.java, ::Toml4jConfigSerializer)
-            oldConfig = oldConfigHolder.config
-            oldConfigFile.moveTo(oldConfigFileBackup)
-        }
-
-        // Expire backup
-        if (oldConfigFileBackup.exists() &&
-            Instant.now() - oldConfigFileBackup.getLastModifiedTime().toInstant() >= Duration.ofDays(14)
-        ) {
-            oldConfigFileBackup.deleteIfExists()
-        }
     }
 
     private fun setupEvents() {
@@ -201,8 +159,4 @@ object MainMumbleLinkMod : ModInitializer {
 
         ServerPlayNetworking.send(player, SendMumbleURL.ID, buf)
     }
-}
-
-private operator fun Temporal.minus(other: Temporal): Duration {
-    return Duration.between(other, this)
 }

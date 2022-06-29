@@ -11,12 +11,12 @@ plugins {
     java
     idea
     `maven-publish`
-    id("fabric-loom") version "0.10-SNAPSHOT"
-    id("com.github.ben-manes.versions") version "0.39.0"
+    id("fabric-loom") version "0.12-SNAPSHOT"
+    id("com.github.ben-manes.versions") version "0.42.0"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.0.5"
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    id("com.diffplug.spotless") version "6.7.2"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.serialization") version "1.7.0"
     id("org.shipkit.shipkit-auto-version") version "1.+"
     id("org.shipkit.shipkit-changelog") version "1.+"
     id("org.shipkit.shipkit-github-release") version "1.+"
@@ -87,9 +87,6 @@ dependencies {
 
     modImplementation("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
     include("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
-
-    modImplementation("me.sargunvohra.mcmods:autoconfig1u:3.3.1")
-    include("me.sargunvohra.mcmods:autoconfig1u:3.3.1")
 
     modImplementation("me.shedaniel.cloth:fiber2cloth:$fiber_2_cloth_version") {
         isTransitive = false
@@ -224,10 +221,10 @@ curseforge {
 
 spotless {
     kotlin {
-        ktlint("0.43.2")
+        ktlint("0.45.2")
     }
     kotlinGradle {
-        ktlint("0.43.2")
+        ktlint("0.45.2")
     }
 }
 
