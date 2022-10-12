@@ -248,7 +248,8 @@ afterEvaluate {
     // CurseGradle generates tasks in afterEvaluate for each project
     // There isn't really any other way to make it depend on a task unless it is an AbstractArchiveTask
     val curseforgeTask = tasks.getByName("curseforge$curseforge_id")
+    val modrinthTask = tasks.modrinth
     tasks.publish {
-        dependsOn(curseforgeTask)
+        dependsOn(curseforgeTask, modrinthTask)
     }
 }
