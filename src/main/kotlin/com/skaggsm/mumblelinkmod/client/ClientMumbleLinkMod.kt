@@ -164,8 +164,9 @@ object ClientMumbleLinkMod : ClientModInitializer {
     private fun ensureLinked(): MumbleLink {
         var localMumble = mumble
 
-        if (localMumble != null)
+        if (localMumble != null) {
             return localMumble
+        }
 
         LOG.info("Linking to VoIP client...")
         localMumble = MumbleLinkImpl()
