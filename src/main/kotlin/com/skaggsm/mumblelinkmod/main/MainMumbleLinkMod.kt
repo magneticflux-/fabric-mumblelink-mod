@@ -49,7 +49,6 @@ object MainMumbleLinkMod : ModInitializer {
         setupEvents()
     }
 
-    @Suppress("DEPRECATION")
     private fun setupConfig() {
         config = MainConfig()
 
@@ -65,8 +64,9 @@ object MainMumbleLinkMod : ModInitializer {
 
     fun createSettings(): AnnotatedSettings {
         val settingsBuilder = AnnotatedSettings.builder()
-        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
+        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
             Fiber2Cloth.configure(settingsBuilder)
+        }
         return settingsBuilder.build()
     }
 
@@ -116,16 +116,24 @@ object MainMumbleLinkMod : ModInitializer {
         val dim = toWorld.value
         val dimNamespace = dim.namespace.split('_').joinToString(" ") {
             it.replaceFirstChar { c ->
-                if (c.isLowerCase()) c.titlecase(
-                    Locale.getDefault()
-                ) else c.toString()
+                if (c.isLowerCase()) {
+                    c.titlecase(
+                        Locale.getDefault()
+                    )
+                } else {
+                    c.toString()
+                }
             }
         }
         val dimPath = dim.path.split('_').joinToString(" ") {
             it.replaceFirstChar { c ->
-                if (c.isLowerCase()) c.titlecase(
-                    Locale.getDefault()
-                ) else c.toString()
+                if (c.isLowerCase()) {
+                    c.titlecase(
+                        Locale.getDefault()
+                    )
+                } else {
+                    c.toString()
+                }
             }
         }
         val dimId = "$dimNamespace $dimPath"

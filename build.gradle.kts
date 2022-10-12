@@ -11,12 +11,13 @@ plugins {
     java
     idea
     `maven-publish`
-    id("fabric-loom") version "0.12-SNAPSHOT"
+    id("fabric-loom") version "1.0-SNAPSHOT"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.7.2"
-    kotlin("jvm") version "1.7.0"
-    kotlin("plugin.serialization") version "1.7.0"
+    id("com.modrinth.minotaur") version "2.+"
+    id("com.diffplug.spotless") version "6.11.0"
+    kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
     id("org.shipkit.shipkit-auto-version") version "1.+"
     id("org.shipkit.shipkit-changelog") version "1.+"
     id("org.shipkit.shipkit-github-release") version "1.+"
@@ -51,6 +52,7 @@ repositories {
 }
 
 val curseforge_id: String by project
+val modrinth_id: String by project
 val archives_base_name: String by project
 val maven_group: String by project
 val minecraft_version: String by project
@@ -212,12 +214,33 @@ curseforge {
     )
 }
 
+modrinth {
+    // Stored in ~/.gradle/gradle.properties
+    when {
+        project.hasProperty("modrinthApiKey") -> token.set(project.property("modrinthApiKey").toString())
+        System.getenv("MODRINTH_API_KEY") != null -> token.set(System.getenv("MODRINTH_API_KEY"))
+        else -> println("No Modrinth API key found, \'modrinth\' tasks will not work")
+    }
+    projectId.set(modrinth_id)
+    versionNumber.set(version.toString())
+    gameVersions.add(minecraft_version)
+    uploadFile.set(tasks.remapJar as Any)
+    additionalFiles.add(tasks.remapSourcesJar as Any)
+    loaders.addAll("fabric", "quilt")
+    dependencies {
+        required.project("fabric-api")
+        optional.project("modmenu")
+        embedded.project("cloth-config")
+        embedded.project("fabric-language-kotlin")
+    }
+}
+
 spotless {
     kotlin {
-        ktlint("0.45.2")
+        ktlint("0.47.1")
     }
     kotlinGradle {
-        ktlint("0.45.2")
+        ktlint("0.47.1")
     }
 }
 
