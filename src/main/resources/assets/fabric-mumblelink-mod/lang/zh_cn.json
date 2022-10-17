@@ -1,0 +1,14 @@
+{
+  "config.fabric-mumblelink-mod.title": "MumbleLink 配置",
+  "config.fabric-mumblelink-mod.client": "客户端",
+  "config.fabric-mumblelink-mod.main": "服务器",
+  "config.fabric-mumblelink-mod.clientAutoLaunchOption": "提供 VoIP 服务器时要采取的行动。",
+  "config.fabric-mumblelink-mod.clientDimensionYAxisAdjust": "Y轴偏移尺寸ID乘法。请询问您的服务器所有者其值 (一般为512)。",
+  "config.fabric-mumblelink-mod.voipClient": "要启动的 VoIP 客户端。",
+  "config.fabric-mumblelink-mod.voipServerUserinfo": "VoIP 服务器用户信息。",
+  "config.fabric-mumblelink-mod.voipServerHost": "VoIP 服务器主机。",
+  "config.fabric-mumblelink-mod.voipServerPort": "VoIP 服务器端口。",
+  "config.fabric-mumblelink-mod.voipServerPath": "VoIP 服务器路径。支持模板，请查看读。",
+  "config.fabric-mumblelink-mod.voipServerQuery": "VoIP 服务器查询。支持模板，请查看读。",
+  "config.fabric-mumblelink-mod.voipServerFragment": "VoIP 服务器片段。"
+}
